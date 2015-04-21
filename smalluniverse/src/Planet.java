@@ -7,14 +7,16 @@ import org.lwjgl.util.glu.Sphere;
 public class Planet extends SpaceObject{
 
 	private float radius;
+	private float orbitRadius;
 	private int id;
 	private Sphere s;
 	
 	private List<Planet> moons = new ArrayList<Planet>();
 	
 	
-	public Planet(float r){
+	public Planet(float r,float or){
 		this.radius = r;
+		this.orbitRadius = or;
 		s = new Sphere();
 	}
 	
@@ -28,5 +30,21 @@ public class Planet extends SpaceObject{
 	
 	public void draw(){
 		s.draw(radius, 32, 32);
+	}
+	
+	public float getRadius(){
+		return this.radius;
+	}
+	
+	public void setRadius(float radius){
+		this.radius = radius;
+	}
+	
+	public float getOrbitRadius(){
+		return this.orbitRadius;
+	}
+	
+	public void setOrbitRadius(float orbitRadius){
+		this.orbitRadius = orbitRadius;
 	}
 }

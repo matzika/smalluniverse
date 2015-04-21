@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -5,7 +6,7 @@ public class SolarSystem {
 	private Sun sun;
 	private List<Sun> suns;
 	
-	private List<Planet> planets;
+	private List<Planet> planets = new ArrayList<Planet>();
 
 	public SolarSystem(Sun sun){
 		this.sun = sun;
@@ -15,8 +16,8 @@ public class SolarSystem {
 		this.suns = suns;
 	}
 	
-	public void createPlanet(float x,float y, float z, float r){
-		Planet planet = new Planet(r);
+	public void createPlanet(float r, float distance){
+		Planet planet = new Planet(r,distance);
 		
 		planets.add(planet);
 	}

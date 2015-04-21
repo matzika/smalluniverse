@@ -2,6 +2,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 
@@ -25,12 +27,16 @@ public class Universe {
 	
 	static int snapshot_count = 0;
 	
+	static List<SolarSystem> solarSystems = new ArrayList<SolarSystem>();
+	
 	public static void run() {
         Universe.createWindow();
         Universe.initGL();
         
         //creates the camera
         camera = new Camera();
+        
+        Universe.createUniverse();
         
         while (!closeRequested) {
             Universe.pollInput();
@@ -56,14 +62,14 @@ public class Universe {
         GL11.glMatrixMode(GL11.GL_PROJECTION); // Select The Projection Matrix
         GL11.glLoadIdentity(); // Reset The Projection Matrix
       
-        GLU.gluPerspective(135, ((float) width / (float) height), 0.1f, 100); //set perpective projection 
+        GLU.gluPerspective(60, ((float) width / (float) height), 0.1f, 100); //set perpective projection 
         GL11.glMatrixMode(GL11.GL_MODELVIEW); // Select The Modelview Matrix
         GL11.glLoadIdentity(); // Reset The Modelview Matrix
 
         GL11.glShadeModel(GL11.GL_SMOOTH); // Enables Smooth Shading
         GL11.glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // Black Background
         GL11.glClearDepth(1.0f); // Depth Buffer Setup
-        //GL11.glEnable(GL11.GL_TEXTURE_2D);
+        GL11.glEnable(GL11.GL_TEXTURE_2D);
         GL11.glEnable(GL11.GL_DEPTH_TEST); // Enables Depth Testing
         GL11.glDepthFunc(GL11.GL_LEQUAL); // The Type Of Depth Test To Do
         GL11.glHint(GL11.GL_PERSPECTIVE_CORRECTION_HINT, GL11.GL_NICEST); // Really Nice Perspective Calculations
@@ -74,6 +80,17 @@ public class Universe {
     }
 	
 	public static void createUniverse(){
+		Sun sun = new Sun(10f);
+		SolarSystem ss = new SolarSystem(sun);
+		//create mercury
+		ss.createPlanet(1f, 3f);
+		//create venus
+		ss.createPlanet(1.5f, 6f);
+		//create earth
+		ss.createPlanet(2f, 10f);
+		//create mars
+		ss.createPlanet(1.7f, 15f);
+		solarSystems.add(ss);
 		
 	}
 	
@@ -83,6 +100,25 @@ public class Universe {
 	
 	private static void renderGL() {
 		
+		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT); // Clear The Screen And The Depth Buffer
+	    GL11.glLoadIdentity(); // Reset The View
+
+	    camera.apply();
+		
+		for(SolarSystem ss : solarSystems){
+			GL11.glTranslatef(0.0f, 0.0f, -70f);
+			GL11.glPushMatrix();
+		    {
+		    	GL11.glColor3f(1f,1f,0f);
+		        ss.getSun().draw();
+		        for(Planet p : ss.getPlanets()){
+		        	GL11.glTranslatef(1.0f, 0.0f, -35 - p.getOrbitRadius());
+		        	GL11.glColor3f(1f,0f,0f);
+		        	p.draw();
+		        }
+		    }
+		    GL11.glPopMatrix();
+		}	
 	}
 	
 	 /**

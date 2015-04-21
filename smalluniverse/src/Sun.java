@@ -9,6 +9,7 @@ public class Sun extends SpaceObject{
 	
 	public Sun(float r){
 		this.radius = r;
+		s = new Sphere();
 	}
 	
 	public int getId(){
@@ -17,5 +18,9 @@ public class Sun extends SpaceObject{
 	
 	public void setId(int id){
 		this.id = id;
+	}
+	
+	public void draw(){
+		s.draw(radius, 32, 32);
 	}
 }

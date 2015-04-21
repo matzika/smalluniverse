@@ -8,7 +8,7 @@ import org.lwjgl.opengl.GL11;
  * Simulates the camera 
  */
 public class Camera {
-        public static float moveSpeed = 0.01f;
+        public static float moveSpeed = 0.1f;
 
         private float x;
         private float y;
