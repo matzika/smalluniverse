@@ -121,9 +121,9 @@ public class Universe {
 	private static void renderGL() {
 
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT); // Clear The Screen And The Depth Buffer
-	    GL11.glLoadIdentity(); // Reset The View
-
-	    camera.apply();
+	  GL11.glLoadIdentity(); // Reset The View
+		GL11.glTranslatef(0.0f, 0.0f, -20f);
+	  camera.apply();
 
 		for(SolarSystem ss : solarSystems){
 			GL11.glTranslatef(0.0f, 0.0f, -70f);
