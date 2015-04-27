@@ -26,6 +26,9 @@ public class Universe {
 
 	static Camera camera;
 
+	static ShaderProgram sunShader;
+	static ShaderProgram lightShader;
+
 	static int snapshot_count = 0;
 
 	static List<SolarSystem> solarSystems = new ArrayList<SolarSystem>();
@@ -158,9 +161,11 @@ public class Universe {
      * Polls Input from keyboard to create an interactive program
      */
     public static void pollInput() {
+				//Delegates Camera input to the camera class
 				camera.acceptInput(Universe.getDelta());
 
         //basic movement in the universe on the y axis (Forward, Backward, Left, Right)
+				//Left here for now, but not necessary
         if(Keyboard.isKeyDown(Keyboard.KEY_UP))
         	camera.move(-1,1);
         if(Keyboard.isKeyDown(Keyboard.KEY_DOWN))
