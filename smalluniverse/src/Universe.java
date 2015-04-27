@@ -136,13 +136,18 @@ public class Universe {
 						lightShader.setUniform3f("lights[0].position", 0.0f, 0.0f, 70.0f);
 						lightShader.setUniform1f("lights[0].intensity", 1.0f);
 		        for(Planet p : ss.getPlanets()){
-							//TODO: add material properties to planets
-							lightShader.setUniform4f("mat.diffuse", 1.0f, 0.0f, 0.0f, 1.0f);
-							lightShader.setUniform4f("mat.ambient", 0.2f, 0.0f, 0.0f, 1.0f);
-							lightShader.setUniform4f("mat.specular", 0.5f, 0.5f, 0.5f, 1.0f);
-							lightShader.setUniform4f("mat.color1", 1.0f, 1.0f, 1.0f, 1.0f);
-							lightShader.setUniform4f("mat.color2", 1.0f, 0.0f, 0.0f, 1.0f);
-							lightShader.setUniform1f("mat.shininess", 10.0f);
+
+							//Get Material for Planet
+							Material planetMat = p.getMaterial();
+							float[] d = planetMat.getDiffuse();
+							float[] a = planetMat.getAmbient();
+							float[] s = planetMat.getSpecular();
+							float shi = planetMat.getShininess();
+
+							lightShader.setUniform4f("mat.diffuse", d[0], d[1], d[2], d[3]);
+							lightShader.setUniform4f("mat.ambient", a[0], a[1], a[2], a[3]);
+							lightShader.setUniform4f("mat.specular", s[0], s[1], s[2], s[3]);
+							lightShader.setUniform1f("mat.shininess", shi);
 		        	GL11.glTranslatef(1.0f, 0.0f, -35 - p.getOrbitRadius());
 		        	GL11.glColor3f((float) Math.random(),(float) Math.random(),(float) Math.random());
 		        	p.draw();

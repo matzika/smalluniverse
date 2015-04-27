@@ -10,6 +10,7 @@ public class Planet extends SpaceObject{
 	private float orbitRadius;
 	private int id;
 	private Sphere s;
+	private Material material;
 
 	private List<Planet> moons = new ArrayList<Planet>();
 
@@ -18,6 +19,22 @@ public class Planet extends SpaceObject{
 		this.radius = r;
 		this.orbitRadius = or;
 		s = new Sphere();
+		this.material = new Material();
+	}
+
+	public Planet(float r, float or, Material mat){
+		this.radius = r;
+		this.orbitRadius = or;
+		s = new Sphere();
+		this.material = mat;
+	}
+
+	public Material getMaterial(){
+		return this.material;
+	}
+
+	public void setMaterial(Material mat){
+		this.material = mat;
 	}
 
 	public int getId(){
