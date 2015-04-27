@@ -25,6 +25,9 @@ import static org.lwjgl.opengl.GL20.glUseProgram;
 import static org.lwjgl.opengl.GL20.glGetUniformLocation;
 
 import java.nio.FloatBuffer;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
@@ -50,8 +53,12 @@ public class ShaderProgram {
     String fragS = "";
 
     if(asFile){
-      vertS = readFileAsString(vert);
-      fragS = readFileAsString(frag);
+      try{
+        vertS = readFileAsString(vert);
+        fragS = readFileAsString(frag);
+      }catch(Exception e){
+        e.printStackTrace();
+      }
     }
     else{
       vertS = vert;

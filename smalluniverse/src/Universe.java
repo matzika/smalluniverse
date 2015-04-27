@@ -37,6 +37,13 @@ public class Universe {
         Universe.createWindow();
         Universe.initGL();
 
+				//create shaders
+				try{
+					Universe.lightShader = new ShaderProgram("shaders/lighting.vert", "shaders/lighting.frag", true);
+				}catch(Exception e){
+					e.printStackTrace();
+				}
+
         //creates the camera
         camera = new Camera();
 
@@ -67,7 +74,7 @@ public class Universe {
         GL11.glMatrixMode(GL11.GL_PROJECTION); // Select The Projection Matrix
         GL11.glLoadIdentity(); // Reset The Projection Matrix
 
-        GLU.gluPerspective(60, ((float) width / (float) height), 0.1f, 1000); //set perpective projection
+        GLU.gluPerspective(60, ((float) width / (float) height), 0.1f, 6000); //set perpective projection
         GL11.glMatrixMode(GL11.GL_MODELVIEW); // Select The Modelview Matrix
         GL11.glLoadIdentity(); // Reset The Modelview Matrix
 
@@ -85,16 +92,16 @@ public class Universe {
     }
 
 	public static void createUniverse(){
-		Sun sun = new Sun(10f);
+		Sun sun = new Sun(40f);
 		SolarSystem ss = new SolarSystem(sun);
 		//create mercury
-		ss.createPlanet(1f, 3f);
+		ss.createPlanet(4f, 30f);
 		//create venus
-		ss.createPlanet(1.5f, 6f);
+		ss.createPlanet(6f, 42f);
 		//create earth
-		ss.createPlanet(2f, 10f);
+		ss.createPlanet(8f, 58f);
 		//create mars
-		ss.createPlanet(1.7f, 15f);
+		ss.createPlanet(6.8f, 78f);
 		solarSystems.add(ss);
 
 	}
@@ -124,11 +131,23 @@ public class Universe {
 		    {
 		    	GL11.glColor3f(1f,1f,0f);
 		        ss.getSun().draw();
+						//Light shader should not apply to sun
+						lightShader.begin();
+						lightShader.setUniform3f("lights[0].position", 0.0f, 0.0f, 70.0f);
+						lightShader.setUniform1f("lights[0].intensity", 1.0f);
 		        for(Planet p : ss.getPlanets()){
+							//TODO: add material properties to planets
+							lightShader.setUniform4f("mat.diffuse", 1.0f, 0.0f, 0.0f, 1.0f);
+							lightShader.setUniform4f("mat.ambient", 0.2f, 0.0f, 0.0f, 1.0f);
+							lightShader.setUniform4f("mat.specular", 0.5f, 0.5f, 0.5f, 1.0f);
+							lightShader.setUniform4f("mat.color1", 1.0f, 1.0f, 1.0f, 1.0f);
+							lightShader.setUniform4f("mat.color2", 1.0f, 0.0f, 0.0f, 1.0f);
+							lightShader.setUniform1f("mat.shininess", 10.0f);
 		        	GL11.glTranslatef(1.0f, 0.0f, -35 - p.getOrbitRadius());
-		        	GL11.glColor3f(1f,0f,0f);
+		        	GL11.glColor3f((float) Math.random(),(float) Math.random(),(float) Math.random());
 		        	p.draw();
 		        }
+						lightShader.end();
 		    }
 		    GL11.glPopMatrix();
 		}
@@ -230,7 +249,7 @@ public class Universe {
     private static void createWindow() {
         try {
             Display.setDisplayMode(new DisplayMode(800, 600));
-            //Display.setVSyncEnabled(true);
+            Display.setVSyncEnabled(true);
             Display.setTitle(windowTitle);
             Display.create();
         } catch (LWJGLException e) {
