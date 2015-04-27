@@ -18,37 +18,39 @@ import org.lwjgl.util.glu.GLU;
 
 
 public class Universe {
+	static long lastFrameTime; // used to calculate delta
 
 	static String windowTitle = "A small universe";
-	
+
 	public static boolean closeRequested = false;
-	
+
 	static Camera camera;
-	
+
 	static int snapshot_count = 0;
-	
+
 	static List<SolarSystem> solarSystems = new ArrayList<SolarSystem>();
-	
+
 	public static void run() {
         Universe.createWindow();
         Universe.initGL();
-        
+
         //creates the camera
         camera = new Camera();
-        
+
         Universe.createUniverse();
-        
+				Universe.getDelta(); // Initialise delta timer
+
         while (!closeRequested) {
             Universe.pollInput();
-            Universe.updateLogic();
+            Universe.updateLogic(Universe.getDelta());
             Universe.renderGL();
             Display.sync(60);
             Display.update();
         }
-        
+
         Universe.cleanup();
 	}
-	
+
 	/**
      * Sets openGL matrixes & states
      */
@@ -61,8 +63,8 @@ public class Universe {
         GL11.glViewport(0, 0, width, height); // Reset The Current Viewport
         GL11.glMatrixMode(GL11.GL_PROJECTION); // Select The Projection Matrix
         GL11.glLoadIdentity(); // Reset The Projection Matrix
-      
-        GLU.gluPerspective(60, ((float) width / (float) height), 0.1f, 100); //set perpective projection 
+
+        GLU.gluPerspective(60, ((float) width / (float) height), 0.1f, 1000); //set perpective projection
         GL11.glMatrixMode(GL11.GL_MODELVIEW); // Select The Modelview Matrix
         GL11.glLoadIdentity(); // Reset The Modelview Matrix
 
@@ -73,12 +75,12 @@ public class Universe {
         GL11.glEnable(GL11.GL_DEPTH_TEST); // Enables Depth Testing
         GL11.glDepthFunc(GL11.GL_LEQUAL); // The Type Of Depth Test To Do
         GL11.glHint(GL11.GL_PERSPECTIVE_CORRECTION_HINT, GL11.GL_NICEST); // Really Nice Perspective Calculations
-        
+
         GL11.glEnable(GL11.GL_BLEND);//enables blening so that we see the particles fading smoothly
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-      
+
     }
-	
+
 	public static void createUniverse(){
 		Sun sun = new Sun(10f);
 		SolarSystem ss = new SolarSystem(sun);
@@ -91,20 +93,28 @@ public class Universe {
 		//create mars
 		ss.createPlanet(1.7f, 15f);
 		solarSystems.add(ss);
-		
+
 	}
-	
-	private static void updateLogic() {
-		
+
+	public static int getDelta() {
+    long time = (Sys.getTime() * 1000) / Sys.getTimerResolution();
+    int delta = (int) (time - lastFrameTime);
+    lastFrameTime = time;
+
+    return delta;
+  }
+
+	private static void updateLogic(float delta) {
+
 	}
-	
+
 	private static void renderGL() {
-		
+
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT); // Clear The Screen And The Depth Buffer
 	    GL11.glLoadIdentity(); // Reset The View
 
 	    camera.apply();
-		
+
 		for(SolarSystem ss : solarSystems){
 			GL11.glTranslatef(0.0f, 0.0f, -70f);
 			GL11.glPushMatrix();
@@ -118,7 +128,7 @@ public class Universe {
 		        }
 		    }
 		    GL11.glPopMatrix();
-		}	
+		}
 	}
 
     //Given an object's rotation angle, this will update and return that rotationAngle
@@ -143,12 +153,13 @@ public class Universe {
         yCoord = (float)(centerY+Math.cos(angle)*radius);
         return new float[]{xCoord, yCoord, angle};
     }
-	
+
 	 /**
      * Polls Input from keyboard to create an interactive program
      */
     public static void pollInput() {
-        
+				camera.acceptInput(Universe.getDelta());
+
         //basic movement in the universe on the y axis (Forward, Backward, Left, Right)
         if(Keyboard.isKeyDown(Keyboard.KEY_UP))
         	camera.move(-1,1);
@@ -158,7 +169,7 @@ public class Universe {
         	camera.move(-1,0);
         if(Keyboard.isKeyDown(Keyboard.KEY_RIGHT))
         	camera.move(1,0);
-        
+
         // scroll through key events
         while (Keyboard.next()) {
             if (Keyboard.getEventKeyState()) {
@@ -173,7 +184,7 @@ public class Universe {
             closeRequested = true;
         }
     }
-    
+
     /**
      * Takes a snapshot from the screen
      */
@@ -192,7 +203,7 @@ public class Universe {
         snapshot_count++;
         String format = "PNG"; // Example: "PNG" or "JPG"
         BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-   
+
         for(int x = 0; x < width; x++) {
             for(int y = 0; y < height; y++) {
                 int i = (x + (width * y)) * bpp;
@@ -202,14 +213,14 @@ public class Universe {
                 image.setRGB(x, height - (y + 1), (0xFF << 24) | (r << 16) | (g << 8) | b);
             }
         }
-           
+
         try {
             ImageIO.write(image, format, file);
         } catch (IOException e) { e.printStackTrace(); }
     }
-    
+
     /**
-     * Creates the screen for the simulation to be displayed 
+     * Creates the screen for the simulation to be displayed
      */
     private static void createWindow() {
         try {
@@ -222,14 +233,14 @@ public class Universe {
             System.exit(0);
         }
     }
-    
+
     /**
      * Destroy and clean up resources
      */
     private static void cleanup() {
         Display.destroy();
     }
-	
+
 	/**
 	 * @param args
 	 */
