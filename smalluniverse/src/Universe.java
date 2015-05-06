@@ -16,6 +16,10 @@ import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
 
+import org.newdawn.slick.opengl.TextureLoader;
+import org.newdawn.slick.opengl.Texture;
+import org.newdawn.slick.util.ResourceLoader;;
+
 
 public class Universe {
 	static long lastFrameTime; // used to calculate delta
@@ -32,6 +36,7 @@ public class Universe {
 	static int snapshot_count = 0;
 
 	static List<SolarSystem> solarSystems = new ArrayList<SolarSystem>();
+	private static Texture mercury, venus, earth, mars, jupiter, saturn, uranus, neptune,pluto;
 
 	public static void run() {
         Universe.createWindow();
@@ -88,8 +93,21 @@ public class Universe {
 
         GL11.glEnable(GL11.GL_BLEND);//enables blening so that we see the particles fading smoothly
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        
-        
+
+    	try {
+    		mercury = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/mercury.png"));
+    		venus = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/venus.png"));
+    		earth = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/image.png"));
+    		mars = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/mars.png"));
+    		jupiter = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/jupiter.png"));
+    		saturn = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/saturn.png"));
+			uranus = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/uranus.png"));
+			neptune = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/neptune.png"));
+			pluto = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/pluto.png"));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
     }
 
@@ -97,23 +115,23 @@ public class Universe {
 		Sun sun = new Sun(100f);
 		SolarSystem ss = new SolarSystem(sun);
 		//create mercury
-		ss.createPlanet(0.48f, 200f);
+		ss.createPlanet(0.48f, 200f, mercury);
 		//create venus
-		ss.createPlanet(1.21f, 250f);
+		ss.createPlanet(1.21f, 250f, venus);
 		//create earth
-		ss.createPlanet(1.27f, 250f);
+		ss.createPlanet(1.27f, 350f, earth);
 		//create mars
-		ss.createPlanet(0.67f, 250f);
+		ss.createPlanet(0.67f, 400f, mars);
 		//create Jupiter
-		ss.createPlanet(14.29f, 300f);
+		ss.createPlanet(14.29f, 450f,jupiter);
 		//create Saturn
-		ss.createPlanet(12f, 250f);
+		ss.createPlanet(12f, 500f, saturn);
 		//create Uranus
-		ss.createPlanet(5.1f, 250f);
+		ss.createPlanet(5.1f, 550f, uranus);
 		//create Neptune
-		ss.createPlanet(4.9f, 250f);
+		ss.createPlanet(4.9f, 600f, neptune);
 		//create Pluto
-		ss.createPlanet(0.23f, 250f);
+		ss.createPlanet(0.23f, 650f, pluto);
 		solarSystems.add(ss);
 
 	}
@@ -136,7 +154,6 @@ public class Universe {
 	  GL11.glLoadIdentity(); // Reset The View
 		GL11.glTranslatef(0.0f, 0.0f, -20f);
 	  camera.apply();
-
 		for(SolarSystem ss : solarSystems){
 			GL11.glTranslatef(0.0f, 0.0f, -200f);
 			GL11.glPushMatrix();
@@ -144,29 +161,43 @@ public class Universe {
 		    	GL11.glColor3f(1f,1f,0f);
 		        ss.getSun().draw(null);
 		        
-						//Light shader should not apply to sun
-						lightShader.begin();
-						lightShader.setUniform3f("lights[0].position", 0.0f, 0.0f, 70.0f);
-						lightShader.setUniform1f("lights[0].intensity", 1.0f);
+//						//Light shader should not apply to sun
+//						lightShader.begin();
+//						lightShader.setUniform3f("lights[0].position", 0.0f, 0.0f, 70.0f);
+//						lightShader.setUniform1f("lights[0].intensity", 1.0f);
+		        int counter = 0;
 		        for(Planet p : ss.getPlanets()){
 
-							//Get Material for Planet
-							Material planetMat = p.getMaterial();
-							float[] d = planetMat.getDiffuse();
-							float[] a = planetMat.getAmbient();
-							float[] s = planetMat.getSpecular();
-							float shi = planetMat.getShininess();
+		    	    
+//
+//							//Get Material for Planet
+//							Material planetMat = p.getMaterial();
+//							float[] d = planetMat.getDiffuse();
+//							float[] a = planetMat.getAmbient();
+//							float[] s = planetMat.getSpecular();
+//							float shi = planetMat.getShininess();
+//
+//							lightShader.setUniform4f("mat.diffuse", d[0], d[1], d[2], d[3]);
+//							lightShader.setUniform4f("mat.ambient", a[0], a[1], a[2], a[3]);
+//							lightShader.setUniform4f("mat.specular", s[0], s[1], s[2], s[3]);
+//							lightShader.setUniform1f("mat.shininess", shi);
+		    	    GL11.glPushMatrix();
+							float[] coords = revolutionPlanet(0f, 0f,p.getPX(), p.getPY(), p.getRevolutionAngle(), p.getOrbitRadius());
+							p.setPX(coords[0]);
+							p.setPY(coords[1]);
+							p.setRevolutionAngle(coords[2]);
+							GL11.glTranslatef(p.getPX(),0f, p.getPY());
+			    	p.setRotationAngle( rotatePlanet(p.getRotationAngle()));
 
-							lightShader.setUniform4f("mat.diffuse", d[0], d[1], d[2], d[3]);
-							lightShader.setUniform4f("mat.ambient", a[0], a[1], a[2], a[3]);
-							lightShader.setUniform4f("mat.specular", s[0], s[1], s[2], s[3]);
-							lightShader.setUniform1f("mat.shininess", shi);
-		        	GL11.glTranslatef(1.0f, 0.0f, -35 - p.getOrbitRadius());
-		        	GL11.glColor3f((float) Math.random(),(float) Math.random(),(float) Math.random());
-		        	p.draw(null);
+
+//		        	GL11.glColor3f((float) Math.random(),(float) Math.random(),(float) Math.random());
+		        	p.draw();
+		        	GL11.glPopMatrix();
+		        	counter = counter + 1;
+		        	
 		        	
 		        }
-						lightShader.end();
+//						lightShader.end();
 		    }
 		    GL11.glPopMatrix();
 		}
@@ -176,7 +207,7 @@ public class Universe {
     //And it will rotate the object by that angle amount if run
     //after the object's translation but before draw
     public static float rotatePlanet(float rotationAngle){
-        rotationAngle = 5f + rotationAngle;
+        rotationAngle =5f + rotationAngle;
         if(rotationAngle >=360)
             rotationAngle = 0f;
         GL11.glRotatef(rotationAngle, 0f, 1f, 0f ); //  rotate around center

@@ -1,6 +1,8 @@
 import java.util.ArrayList;
 import java.util.List;
 
+import org.newdawn.slick.opengl.Texture;
+
 
 public class SolarSystem {
 	private Sun sun;
@@ -16,8 +18,8 @@ public class SolarSystem {
 		this.suns = suns;
 	}
 	
-	public void createPlanet(float r, float distance){
-		Planet planet = new Planet(r,distance);
+	public void createPlanet(float r, float distance, Texture t){
+		Planet planet = new Planet(r,distance, t );
 		
 		planets.add(planet);
 	}
