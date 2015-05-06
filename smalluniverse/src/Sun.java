@@ -1,3 +1,4 @@
+import org.lwjgl.examples.spaceinvaders.Texture;
 import org.lwjgl.util.glu.Sphere;
 
 
@@ -20,7 +21,7 @@ public class Sun extends SpaceObject{
 		this.id = id;
 	}
 
-	public void draw(){
+	public void draw(Texture texture){
 		s.draw(radius, 64, 64);
 	}
 }

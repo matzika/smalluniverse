@@ -1,3 +1,5 @@
+import org.lwjgl.examples.spaceinvaders.Texture;
+
 
 public class SpaceObject {
 
@@ -6,7 +8,8 @@ public class SpaceObject {
 		
 	}
 	
-	public void draw(){
-		this.draw();
+	public void draw(Texture texture){
+		this.draw(texture);
 	}
+
 }

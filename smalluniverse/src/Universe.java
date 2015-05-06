@@ -88,20 +88,32 @@ public class Universe {
 
         GL11.glEnable(GL11.GL_BLEND);//enables blening so that we see the particles fading smoothly
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        
+        
 
     }
 
 	public static void createUniverse(){
-		Sun sun = new Sun(40f);
+		Sun sun = new Sun(100f);
 		SolarSystem ss = new SolarSystem(sun);
 		//create mercury
-		ss.createPlanet(4f, 30f);
+		ss.createPlanet(0.48f, 200f);
 		//create venus
-		ss.createPlanet(6f, 42f);
+		ss.createPlanet(1.21f, 250f);
 		//create earth
-		ss.createPlanet(8f, 58f);
+		ss.createPlanet(1.27f, 250f);
 		//create mars
-		ss.createPlanet(6.8f, 78f);
+		ss.createPlanet(0.67f, 250f);
+		//create Jupiter
+		ss.createPlanet(14.29f, 300f);
+		//create Saturn
+		ss.createPlanet(12f, 250f);
+		//create Uranus
+		ss.createPlanet(5.1f, 250f);
+		//create Neptune
+		ss.createPlanet(4.9f, 250f);
+		//create Pluto
+		ss.createPlanet(0.23f, 250f);
 		solarSystems.add(ss);
 
 	}
@@ -126,11 +138,12 @@ public class Universe {
 	  camera.apply();
 
 		for(SolarSystem ss : solarSystems){
-			GL11.glTranslatef(0.0f, 0.0f, -70f);
+			GL11.glTranslatef(0.0f, 0.0f, -200f);
 			GL11.glPushMatrix();
 		    {
 		    	GL11.glColor3f(1f,1f,0f);
-		        ss.getSun().draw();
+		        ss.getSun().draw(null);
+		        
 						//Light shader should not apply to sun
 						lightShader.begin();
 						lightShader.setUniform3f("lights[0].position", 0.0f, 0.0f, 70.0f);
@@ -150,7 +163,8 @@ public class Universe {
 							lightShader.setUniform1f("mat.shininess", shi);
 		        	GL11.glTranslatef(1.0f, 0.0f, -35 - p.getOrbitRadius());
 		        	GL11.glColor3f((float) Math.random(),(float) Math.random(),(float) Math.random());
-		        	p.draw();
+		        	p.draw(null);
+		        	
 		        }
 						lightShader.end();
 		    }
