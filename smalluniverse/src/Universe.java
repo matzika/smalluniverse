@@ -37,6 +37,7 @@ public class Universe {
 
 	static List<SolarSystem> solarSystems = new ArrayList<SolarSystem>();
 	private static Texture sun,mercury, venus, earth, mars, jupiter, saturn, uranus, neptune,pluto;
+	private static Texture moon;
 
 	public static void run() {
         Universe.createWindow();
@@ -79,7 +80,7 @@ public class Universe {
         GL11.glMatrixMode(GL11.GL_PROJECTION); // Select The Projection Matrix
         GL11.glLoadIdentity(); // Reset The Projection Matrix
 
-        GLU.gluPerspective(60, ((float) width / (float) height), 0.1f, 6000); //set perpective projection
+        GLU.gluPerspective(100, ((float) width / (float) height), 0.1f, 6000); //set perpective projection
         GL11.glMatrixMode(GL11.GL_MODELVIEW); // Select The Modelview Matrix
         GL11.glLoadIdentity(); // Reset The Modelview Matrix
 
@@ -105,6 +106,9 @@ public class Universe {
 			uranus = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/uranus.png"));
 			neptune = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/neptune.png"));
 			pluto = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/pluto.png"));
+			
+			//moon - textures
+			moon = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/moon.png"));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -120,7 +124,12 @@ public class Universe {
 		//create venus
 		ss.createPlanet(1.21f, 250f, venus);
 		//create earth
-		ss.createPlanet(1.27f, 350f, earth);
+			//create moon
+			Planet earth_moon = new Planet(0.6f,5f);
+			earth_moon.setTexture(moon);
+			List<Planet> earth_moons = new ArrayList<Planet>();
+			earth_moons.add(earth_moon);
+		ss.createPlanet(1.27f, 350f, earth,earth_moons);
 		//create mars
 		ss.createPlanet(0.67f, 400f, mars);
 		//create Jupiter
@@ -194,6 +203,16 @@ public class Universe {
 
 //		        	GL11.glColor3f((float) Math.random(),(float) Math.random(),(float) Math.random());
 		        	p.draw();
+		        	for(Planet m : p.getMoons()){
+		        		float[] mcoords = revolutionPlanet(0f, 0f,m.getPX(), m.getPY(), m.getRevolutionAngle(), m.getOrbitRadius());
+						m.setPX(mcoords[0]);
+						m.setPY(mcoords[1]);
+						//m.setRevolutionAngle(mcoords[2]);
+						//GL11.glTranslatef(m.getPX(),0f, m.getPY());
+						GL11.glTranslatef(m.getPX(), m.getPY(),- m.getOrbitRadius());
+						//m.setRotationAngle( rotatePlanet(m.getRotationAngle()));
+						m.draw();
+		        	}
 		        	GL11.glPopMatrix();
 		        	counter = counter + 1;
 		        	

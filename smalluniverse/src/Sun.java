@@ -1,4 +1,4 @@
-import org.lwjgl.examples.spaceinvaders.Texture;
+
 import org.lwjgl.util.glu.GLU;
 import org.lwjgl.util.glu.Sphere;
 

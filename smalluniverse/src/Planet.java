@@ -1,9 +1,9 @@
 import java.util.ArrayList;
 import java.util.List;
 
-import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
 import org.lwjgl.util.glu.Sphere;
+import org.newdawn.slick.opengl.Texture;
 
 
 public class Planet extends SpaceObject{
@@ -16,7 +16,6 @@ public class Planet extends SpaceObject{
 		this.radius = r;
 		this.orbitRadius = or;
 		s = new Sphere();
-
 	}
 
 	public Sphere getSphere(){
@@ -32,6 +31,20 @@ public class Planet extends SpaceObject{
 		//GL11.glNewList(textId, GL11.GL_COMPILE);
 		texture.bind();
 		s.draw(radius, 64, 64);
+	}
+	
+	public void addMoons(List<Planet> moons){
+		this.moons.addAll(moons);
+	}
+	
+	public List<Planet> getMoons(){
+		return moons;
+	}
+	
+	public void addMoon(float r,float or, Texture moonText){
+		Planet moon = new Planet(r,or);
+		moon.setTexture(moonText);
+		moons.add(moon);
 	}
 	
 
