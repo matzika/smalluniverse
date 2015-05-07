@@ -36,7 +36,7 @@ public class Universe {
 	static int snapshot_count = 0;
 
 	static List<SolarSystem> solarSystems = new ArrayList<SolarSystem>();
-	private static Texture mercury, venus, earth, mars, jupiter, saturn, uranus, neptune,pluto;
+	private static Texture sun,mercury, venus, earth, mars, jupiter, saturn, uranus, neptune,pluto;
 
 	public static void run() {
         Universe.createWindow();
@@ -95,9 +95,10 @@ public class Universe {
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
     	try {
+    		sun = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/sun.png"));
     		mercury = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/mercury.png"));
     		venus = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/venus.png"));
-    		earth = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/image.png"));
+    		earth = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/earth.png"));
     		mars = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/mars.png"));
     		jupiter = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/jupiter.png"));
     		saturn = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/saturn.png"));
@@ -112,8 +113,8 @@ public class Universe {
     }
 
 	public static void createUniverse(){
-		Sun sun = new Sun(100f);
-		SolarSystem ss = new SolarSystem(sun);
+		Sun solar = new Sun(100f);
+		SolarSystem ss = new SolarSystem(solar,sun);
 		//create mercury
 		ss.createPlanet(0.48f, 200f, mercury);
 		//create venus
@@ -159,7 +160,7 @@ public class Universe {
 			GL11.glPushMatrix();
 		    {
 		    	GL11.glColor3f(1f,1f,0f);
-		        ss.getSun().draw(null);
+		        ss.getSun().draw();
 		        
 //						//Light shader should not apply to sun
 //						lightShader.begin();
@@ -186,8 +187,9 @@ public class Universe {
 							p.setPX(coords[0]);
 							p.setPY(coords[1]);
 							p.setRevolutionAngle(coords[2]);
-							GL11.glTranslatef(p.getPX(),0f, p.getPY());
-			    	p.setRotationAngle( rotatePlanet(p.getRotationAngle()));
+							//GL11.glTranslatef(p.getPX(),0f, p.getPY());
+							GL11.glTranslatef(1.0f, 0.0f,- p.getOrbitRadius());
+			    	//p.setRotationAngle( rotatePlanet(p.getRotationAngle()));
 
 
 //		        	GL11.glColor3f((float) Math.random(),(float) Math.random(),(float) Math.random());
