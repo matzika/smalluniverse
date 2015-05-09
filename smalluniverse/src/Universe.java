@@ -173,22 +173,20 @@ public class Universe {
 				GL11.glColor3f(1f,1f,0f);
 				ss.getSun().draw();
 
-				//						//Light shader should not apply to sun
-				//						lightShader.begin();
-				//						lightShader.setUniform3f("lights[0].position", 0.0f, 0.0f, 70.0f);
-				//						lightShader.setUniform1f("lights[0].intensity", 1.0f);
+				//Light shader should not apply to sun
+				lightShader.begin();
+				float[] sunPos = ss.getSun().getLight().getLocation();
+				float[] sunImd = ss.getSun().getLight().getDiffuse();
+				float[] sunIms = ss.getSun().getLight().getSpecular();
+
+				lightShader.setUniform3f("lights[0].position", sunPos[0], sunPos[1], sunPos[2]);
+				lightShader.setUniform1f("lights[0].intensity", ss.getSun().getLight().getIntensity());
+				lightShader.setUniform4f("lights[0].diffuse", sunImd[0], sunImd[1], sunImd[2], sunImd[3]);
+				lightShader.setUniform4f("lights[0].specular", sunIms[0], sunIms[1], sunIms[2], sunIms[3]);
+
 				int counter = 0;
 				for(Planet p : ss.getPlanets()){
 
-
-					//
-					//							//Get Material for Planet
-					//							Material planetMat = p.getMaterial();
-					//							float[] s = planetMat.getSpecular();
-					//							float shi = planetMat.getShininess();
-					//
-					//							lightShader.setUniform4f("mat.specular", s[0], s[1], s[2], s[3]);
-					//							lightShader.setUniform1f("mat.shininess", shi);
 					GL11.glPushMatrix();
 					float[] coords = revolutionPlanet(0f, 0f,p.getPX(), p.getPY(), p.getRevolutionAngle(), p.getOrbitRadius());
 					p.setPX(coords[0]);
@@ -198,10 +196,20 @@ public class Universe {
 					//GL11.glTranslatef(1.0f, 0.0f,- p.getOrbitRadius());
 					p.setRotationAngle( rotatePlanet(p.getRotationAngle()));
 
-
-					//		        	GL11.glColor3f((float) Math.random(),(float) Math.random(),(float) Math.random());
 					p.draw();
+
+					//Get Material for Planet
+					Material planetMat = p.getMaterial();
+					float[] s = planetMat.getSpecular();
+					float shi = planetMat.getShininess();
+
+					lightShader.setUniform4f("mat.specular", s[0], s[1], s[2], s[3]);
+					lightShader.setUniform1f("mat.shininess", shi);
+					lightShader.setUniform1i("mat.texture", 0);
+
 					for(Planet m : p.getMoons()){
+
+
 						float[] mcoords = revolutionPlanet(0f, 0f,m.getPX(), m.getPY(), m.getRevolutionAngle(), m.getOrbitRadius());
 						m.setPX(mcoords[0]);
 						m.setPY(mcoords[1]);
@@ -210,13 +218,21 @@ public class Universe {
 						GL11.glTranslatef(m.getPX(), m.getPY(),- m.getOrbitRadius());
 						//m.setRotationAngle( rotatePlanet(m.getRotationAngle()));
 						m.draw();
+
+						Material moonMat = m.getMaterial();
+						float[] ms = moonMat.getSpecular();
+						float mshi = moonMat.getShininess();
+
+						lightShader.setUniform4f("mat.specular", ms[0], ms[1], ms[2], ms[3]);
+						lightShader.setUniform1f("mat.shininess", mshi);
+						lightShader.setUniform1i("mat.texture", 0);
 					}
 					GL11.glPopMatrix();
 					counter = counter + 1;
 
 
 				}
-				//						lightShader.end();
+				lightShader.end();
 			}
 			GL11.glPopMatrix();
 		}

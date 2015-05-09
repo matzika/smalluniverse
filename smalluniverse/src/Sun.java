@@ -11,8 +11,8 @@ public class Sun extends SpaceObject{
 		this.radius = r;
 		s = new Sphere();
 		l = new Light();
-		l.setDiffuse(new float[]{1.0f, 1.0f, 1.0f});
-		l.setSpecular(new float[]{1.0f, 1.0f, 1.0f});
+		l.setDiffuse(new float[]{1.0f, 1.0f, 1.0f, 1.0f});
+		l.setSpecular(new float[]{0.8f, 0.8f, 0.8f, 0.8f});
 	}
 
 	public void draw(){

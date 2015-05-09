@@ -23,6 +23,7 @@ void main(){
 
   vec4 spec = vec4(0.0);
   vec4 diffuse = vec4(0.0);
+  vec4 color = texture2D(mat.texture, gl_TexCoord[0].st);
 
   vec3 n = normalize(normal);
   vec3 e = normalize(vec3(eye));
@@ -32,7 +33,7 @@ void main(){
     vec3 lightDir = normalize(lightPos - vec3(pos));
 
     float intensity = max(dot(n, lightDir),0.0);
-    diffuse += intensity * mat.diffuse * lights[i].diffuse;
+    diffuse += intensity * color * lights[i].diffuse;
 
     if(intensity > 0.0){
 

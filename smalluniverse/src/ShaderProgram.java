@@ -228,6 +228,14 @@ public class ShaderProgram {
     glUniform1f(loc, v1);
   }
 
+  public void setUniform1i(String name, int v1){
+    setUniform1i(glGetUniformLocation(program, name), v1);
+  }
+  public void setUniform1i(int loc, int v1){
+    if (loc == -1) return;
+    glUniform1i(loc, v1);
+  }
+
   public void setUniformMatrix(int loc, boolean transposed, Matrix4f mat) {
     if (loc == -1) return;
     if (buff == null)
