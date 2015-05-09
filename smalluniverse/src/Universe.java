@@ -94,6 +94,10 @@ public class Universe {
         GL11.glEnable(GL11.GL_BLEND);//enables blening so that we see the particles fading smoothly
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
+
+
+				//We should use the lwjgl implementation for simplicity in using textures in the shaders
+				// http://wiki.lwjgl.org/index.php?title=The_Quad_textured
     	try {
     		sun = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/sun.png"));
     		mercury = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/mercury.png"));
@@ -102,9 +106,9 @@ public class Universe {
     		mars = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/mars.png"));
     		jupiter = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/jupiter.png"));
     		saturn = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/saturn.png"));
-			uranus = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/uranus.png"));
-			neptune = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/neptune.png"));
-			pluto = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/pluto.png"));
+				uranus = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/uranus.png"));
+				neptune = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/neptune.png"));
+				pluto = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/pluto.png"));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -161,7 +165,7 @@ public class Universe {
 		    {
 		    	GL11.glColor3f(1f,1f,0f);
 		        ss.getSun().draw();
-		        
+
 //						//Light shader should not apply to sun
 //						lightShader.begin();
 //						lightShader.setUniform3f("lights[0].position", 0.0f, 0.0f, 70.0f);
@@ -169,7 +173,7 @@ public class Universe {
 		        int counter = 0;
 		        for(Planet p : ss.getPlanets()){
 
-		    	    
+
 //
 //							//Get Material for Planet
 //							Material planetMat = p.getMaterial();
@@ -187,17 +191,17 @@ public class Universe {
 							p.setPX(coords[0]);
 							p.setPY(coords[1]);
 							p.setRevolutionAngle(coords[2]);
-							//GL11.glTranslatef(p.getPX(),0f, p.getPY());
-							GL11.glTranslatef(1.0f, 0.0f,- p.getOrbitRadius());
-			    	//p.setRotationAngle( rotatePlanet(p.getRotationAngle()));
+							GL11.glTranslatef(p.getPX(),0f, p.getPY());
+							//GL11.glTranslatef(1.0f, 0.0f,- p.getOrbitRadius());
+			    	p.setRotationAngle( rotatePlanet(p.getRotationAngle()));
 
 
 //		        	GL11.glColor3f((float) Math.random(),(float) Math.random(),(float) Math.random());
 		        	p.draw();
 		        	GL11.glPopMatrix();
 		        	counter = counter + 1;
-		        	
-		        	
+
+
 		        }
 //						lightShader.end();
 		    }
