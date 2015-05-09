@@ -142,8 +142,12 @@ public class SolarSystem {
 		this.createPlanet(4.9f, 600f, neptune);
 	}
 	
-	public void drawPluto(Texture pluto){
-		this.createPlanet(0.23f, 650f, pluto);
+	public void drawPluto(Texture pluto, Texture charon){
+		Planet pluto_moon = new Planet(0.15f,5f);
+		pluto_moon.setTexture(charon);
+		List<Planet> pluto_moons = new ArrayList<Planet>();
+		pluto_moons.add(pluto_moon);
+		this.createPlanet(0.25f, 650f, pluto,pluto_moons);
 	}
 	
 	public Sun getSun(){

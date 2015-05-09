@@ -38,7 +38,7 @@ public class Universe {
 
 	static List<SolarSystem> solarSystems = new ArrayList<SolarSystem>();
 	private static Texture sun,mercury, venus, earth, mars, jupiter, saturn, uranus, neptune,pluto;
-	private static Texture moon, phobos, deimos, io, callisto, ganymedes, europa, rings;
+	private static Texture moon, phobos, deimos, io, callisto, ganymedes, europa, charon, rings;
 
 	public static void run() {
 		Universe.createWindow();
@@ -117,7 +117,8 @@ public class Universe {
 			io = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/io.png"));
 			ganymedes = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/ganymede.png"));
 			callisto = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/callisto.png"));
-
+			charon = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/charon.png"));
+			
 			rings = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/rings.png"));
 
 		} catch (IOException e) {
@@ -148,7 +149,7 @@ public class Universe {
 		//create Neptune
 		ss.drawNeptune(neptune);
 		//create Pluto
-		ss.drawPluto(pluto);
+		ss.drawPluto(pluto,charon);
 		
 		
 		solarSystems.add(ss);
