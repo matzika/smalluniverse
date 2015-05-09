@@ -1,12 +1,14 @@
 struct Light {
   vec3 position;
+  vec4 diffuse;
+  vec4 specular;
 };
 
 struct Material {
   vec4 diffuse;
-  vec4 ambient;
   vec4 specular;
   float shininess;
+  sampler2D texture;
 };
 
 uniform Material mat;
@@ -30,16 +32,16 @@ void main(){
     vec3 lightDir = normalize(lightPos - vec3(pos));
 
     float intensity = max(dot(n, lightDir),0.0);
-    diffuse += intensity * mat.diffuse;
+    diffuse += intensity * mat.diffuse * lights[i].diffuse;
 
     if(intensity > 0.0){
 
       vec3 halfDir = normalize(lightDir + e);
       float intSpec = max(dot(halfDir, n), 0.0);
-      spec += mat.specular * pow(intSpec, 4.0*mat.shininess);
+      spec += mat.specular * pow(intSpec, 4.0*mat.shininess) * lights[i].specular;
     }
   }
 
-  gl_FragColor = diffuse + spec + mat.ambient;
+  gl_FragColor = diffuse + spec;
 
 }

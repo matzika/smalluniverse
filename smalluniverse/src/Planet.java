@@ -7,7 +7,7 @@ import org.newdawn.slick.opengl.Texture;
 
 
 public class Planet extends SpaceObject{
-	
+
 	private Sphere s;
 
 	private List<Planet> moons = new ArrayList<Planet>();
@@ -27,25 +27,25 @@ public class Planet extends SpaceObject{
 		s.setTextureFlag(true);
 		s.setNormals(GLU.GLU_SMOOTH);
 		//int textId = GL11.glGenLists(1);
-		
+
 		//GL11.glNewList(textId, GL11.GL_COMPILE);
-		texture.bind();
+		this.getTexture().bind();
 		s.draw(radius, 64, 64);
 	}
-	
+
 	public void addMoons(List<Planet> moons){
 		this.moons.addAll(moons);
 	}
-	
+
 	public List<Planet> getMoons(){
 		return moons;
 	}
-	
+
 	public void addMoon(float r,float or, Texture moonText){
 		Planet moon = new Planet(r,or);
 		moon.setTexture(moonText);
 		moons.add(moon);
 	}
-	
+
 
 }
