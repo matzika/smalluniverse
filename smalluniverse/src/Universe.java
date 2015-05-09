@@ -14,6 +14,7 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.util.glu.Disk;
 import org.lwjgl.util.glu.GLU;
 
 import org.newdawn.slick.opengl.TextureLoader;
@@ -37,7 +38,7 @@ public class Universe {
 
 	static List<SolarSystem> solarSystems = new ArrayList<SolarSystem>();
 	private static Texture sun,mercury, venus, earth, mars, jupiter, saturn, uranus, neptune,pluto;
-	private static Texture moon;
+	private static Texture moon, phobos, deimos, io, callisto, ganymedes, europa, rings;
 
 	public static void run() {
 		Universe.createWindow();
@@ -110,6 +111,14 @@ public class Universe {
 
 			//moon - textures
 			moon = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/moon.png"));
+			phobos = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/phobos.png"));
+			deimos = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/deimos.png"));
+			europa = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/europa.png"));
+			io = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/io.png"));
+			ganymedes = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/ganymede.png"));
+			callisto = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/callisto.png"));
+
+			rings = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/rings.png"));
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -121,29 +130,27 @@ public class Universe {
 	public static void createUniverse(){
 		Sun solar = new Sun(100f);
 		SolarSystem ss = new SolarSystem(solar,sun);
+		
 		//create mercury
-		ss.createPlanet(0.48f, 200f, mercury);
+		ss.drawMercury(mercury);
 		//create venus
-		ss.createPlanet(1.21f, 250f, venus);
-		//create earth
-		//create moon
-		Planet earth_moon = new Planet(0.6f,5f);
-		earth_moon.setTexture(moon);
-		List<Planet> earth_moons = new ArrayList<Planet>();
-		earth_moons.add(earth_moon);
-		ss.createPlanet(1.27f, 350f, earth,earth_moons);
-		//create mars
-		ss.createPlanet(0.67f, 400f, mars);
+		ss.drawVenus(venus);
+		//create earth and moon
+		ss.drawEarth(earth, moon);
+		//create mars and its moons
+		ss.drawMars(mars, phobos, deimos);
 		//create Jupiter
-		ss.createPlanet(14.29f, 450f,jupiter);
+		ss.drawJupiter(jupiter, io, ganymedes, europa, callisto);
 		//create Saturn
-		ss.createPlanet(12f, 500f, saturn);
+		ss.drawSaturn(saturn);
 		//create Uranus
-		ss.createPlanet(5.1f, 550f, uranus);
+		ss.drawUranus(uranus);
 		//create Neptune
-		ss.createPlanet(4.9f, 600f, neptune);
+		ss.drawNeptune(neptune);
 		//create Pluto
-		ss.createPlanet(0.23f, 650f, pluto);
+		ss.drawPluto(pluto);
+		
+		
 		solarSystems.add(ss);
 
 	}
@@ -174,7 +181,7 @@ public class Universe {
 				ss.getSun().draw();
 
 				//Light shader should not apply to sun
-				lightShader.begin();
+				/*lightShader.begin();
 				float[] sunPos = ss.getSun().getLight().getLocation();
 				float[] sunImd = ss.getSun().getLight().getDiffuse();
 				float[] sunIms = ss.getSun().getLight().getSpecular();
@@ -183,7 +190,7 @@ public class Universe {
 				lightShader.setUniform1f("lights[0].intensity", ss.getSun().getLight().getIntensity());
 				lightShader.setUniform4f("lights[0].diffuse", sunImd[0], sunImd[1], sunImd[2], sunImd[3]);
 				lightShader.setUniform4f("lights[0].specular", sunIms[0], sunIms[1], sunIms[2], sunIms[3]);
-
+*/
 				int counter = 0;
 				for(Planet p : ss.getPlanets()){
 
@@ -192,9 +199,9 @@ public class Universe {
 					p.setPX(coords[0]);
 					p.setPY(coords[1]);
 					p.setRevolutionAngle(coords[2]);
-					GL11.glTranslatef(p.getPX(),0f, p.getPY());
-					//GL11.glTranslatef(1.0f, 0.0f,- p.getOrbitRadius());
-					p.setRotationAngle( rotatePlanet(p.getRotationAngle()));
+					//GL11.glTranslatef(p.getPX(),0f, p.getPY());
+					GL11.glTranslatef(1.0f, 0.0f,- p.getOrbitRadius());
+					//p.setRotationAngle( rotatePlanet(p.getRotationAngle()));
 
 					p.draw();
 
@@ -203,13 +210,13 @@ public class Universe {
 					float[] s = planetMat.getSpecular();
 					float shi = planetMat.getShininess();
 
-					lightShader.setUniform4f("mat.specular", s[0], s[1], s[2], s[3]);
-					lightShader.setUniform1f("mat.shininess", shi);
-					lightShader.setUniform1i("mat.texture", 0);
+					//lightShader.setUniform4f("mat.specular", s[0], s[1], s[2], s[3]);
+					//lightShader.setUniform1f("mat.shininess", shi);
+					//lightShader.setUniform1i("mat.texture", 0);
 
 					for(Planet m : p.getMoons()){
 
-
+						GL11.glPushMatrix();
 						float[] mcoords = revolutionPlanet(0f, 0f,m.getPX(), m.getPY(), m.getRevolutionAngle(), m.getOrbitRadius());
 						m.setPX(mcoords[0]);
 						m.setPY(mcoords[1]);
@@ -223,16 +230,18 @@ public class Universe {
 						float[] ms = moonMat.getSpecular();
 						float mshi = moonMat.getShininess();
 
-						lightShader.setUniform4f("mat.specular", ms[0], ms[1], ms[2], ms[3]);
-						lightShader.setUniform1f("mat.shininess", mshi);
-						lightShader.setUniform1i("mat.texture", 0);
+						//lightShader.setUniform4f("mat.specular", ms[0], ms[1], ms[2], ms[3]);
+						//lightShader.setUniform1f("mat.shininess", mshi);
+						//lightShader.setUniform1i("mat.texture", 0);
+						GL11.glPopMatrix();
 					}
+					
 					GL11.glPopMatrix();
 					counter = counter + 1;
 
 
 				}
-				lightShader.end();
+				//lightShader.end();
 			}
 			GL11.glPopMatrix();
 		}

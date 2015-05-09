@@ -10,7 +10,7 @@ import org.lwjgl.input.Mouse;
 * Simulates the camera
 */
 public class Camera {
-  public static float moveSpeed = 0.5f;
+  public static float moveSpeed = 2f;
   public static float mouseSensitivity = 0.05f;
 
   private float x;
@@ -76,7 +76,7 @@ public class Camera {
     float speed;
 
     if (keyFast) {
-      speed = moveSpeed * 5;
+      speed = moveSpeed * 10;
     } else if (keySlow) {
       speed = moveSpeed / 2;
     } else {
