@@ -69,8 +69,8 @@ public class Universe {
 	}
 
 	/**
-	* Sets openGL matrixes & states
-	*/
+	 * Sets openGL matrixes & states
+	 */
 	private static void initGL() {
 
 		/* OpenGL */
@@ -118,7 +118,7 @@ public class Universe {
 			ganymedes = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/ganymede.png"));
 			callisto = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/callisto.png"));
 			charon = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/charon.png"));
-			
+
 			rings = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/rings.png"));
 
 		} catch (IOException e) {
@@ -131,27 +131,27 @@ public class Universe {
 	public static void createUniverse(){
 		Sun solar = new Sun(100f);
 		SolarSystem ss = new SolarSystem(solar,sun);
-		
+
 		//create mercury
-		ss.drawMercury(mercury);
+		ss.drawMercury(mercury, 0);
 		//create venus
-		ss.drawVenus(venus);
+		ss.drawVenus(venus, 177.36f);
 		//create earth and moon
-		ss.drawEarth(earth, moon);
+		ss.drawEarth(earth, moon, 23.45f);
 		//create mars and its moons
-		ss.drawMars(mars, phobos, deimos);
+		ss.drawMars(mars, phobos, deimos, 25.19f);
 		//create Jupiter
-		ss.drawJupiter(jupiter, io, ganymedes, europa, callisto);
+		ss.drawJupiter(jupiter, io, ganymedes, europa, callisto, 3.13f);
 		//create Saturn
-		ss.drawSaturn(saturn);
+		ss.drawSaturn(saturn, 26.73f);
 		//create Uranus
-		ss.drawUranus(uranus);
+		ss.drawUranus(uranus, 97.77f);
 		//create Neptune
-		ss.drawNeptune(neptune);
+		ss.drawNeptune(neptune, 28.32f);
 		//create Pluto
-		ss.drawPluto(pluto,charon);
-		
-		
+		ss.drawPluto(pluto,charon, 122.53f);
+
+
 		solarSystems.add(ss);
 
 	}
@@ -191,7 +191,7 @@ public class Universe {
 				lightShader.setUniform1f("lights[0].intensity", ss.getSun().getLight().getIntensity());
 				lightShader.setUniform4f("lights[0].diffuse", sunImd[0], sunImd[1], sunImd[2], sunImd[3]);
 				lightShader.setUniform4f("lights[0].specular", sunIms[0], sunIms[1], sunIms[2], sunIms[3]);
-*/
+				 */
 				int counter = 0;
 				for(Planet p : ss.getPlanets()){
 
@@ -200,10 +200,12 @@ public class Universe {
 					p.setPX(coords[0]);
 					p.setPY(coords[1]);
 					p.setRevolutionAngle(coords[2]);
-					//GL11.glTranslatef(p.getPX(),0f, p.getPY());
-					GL11.glTranslatef(1.0f, 0.0f,- p.getOrbitRadius());
-					//p.setRotationAngle( rotatePlanet(p.getRotationAngle()));
+					GL11.glTranslatef(p.getPX(),0f, p.getPY());
+//					GL11.glTranslatef(1.0f, 0.0f,- p.getOrbitRadius());
+					
+					p.setRotationAngle( rotatePlanet(p.getRotationAngle(), p.getAxisTilt()));
 
+					
 					p.draw();
 
 					//Get Material for Planet
@@ -222,9 +224,9 @@ public class Universe {
 						m.setPX(mcoords[0]);
 						m.setPY(mcoords[1]);
 						//m.setRevolutionAngle(mcoords[2]);
-						//GL11.glTranslatef(m.getPX(),0f, m.getPY());
-						GL11.glTranslatef(m.getPX(), m.getPY(),- m.getOrbitRadius());
-						//m.setRotationAngle( rotatePlanet(m.getRotationAngle()));
+						GL11.glTranslatef(m.getPX(),0f, m.getPY());
+//						GL11.glTranslatef(m.getPX(), m.getPY(),- m.getOrbitRadius());
+						m.setRotationAngle( rotatePlanet(m.getRotationAngle(), 0f));
 						m.draw();
 
 						Material moonMat = m.getMaterial();
@@ -237,9 +239,30 @@ public class Universe {
 						GL11.glPopMatrix();
 					}
 					
+
+					
+					
+					
+					
 					GL11.glPopMatrix();
 					counter = counter + 1;
+					
+					GL11.glPushMatrix();
+					GL11.glColor3f(1.0f, 1.0f, 0f);
+					GL11.glLineWidth(3.0f);
+					GL11.glBegin(GL11.GL_LINE_LOOP);
+					float angle = 0;
+					float x=0f, z=0f;
+					while(angle < (float) (2*Math.PI))
+					{
+						x = (float)Math.sin(angle)*p.getOrbitRadius();
+						z = (float)Math.cos(angle)*p.getOrbitRadius();
+						GL11.glVertex3f(x,0f, z);
+						angle = angle + 0.01f;
+					}
 
+					GL11.glEnd();
+					GL11.glPopMatrix();
 
 				}
 				//lightShader.end();
@@ -251,11 +274,11 @@ public class Universe {
 	//Given an object's rotation angle, this will update and return that rotationAngle
 	//And it will rotate the object by that angle amount if run
 	//after the object's translation but before draw
-	public static float rotatePlanet(float rotationAngle){
+	public static float rotatePlanet(float rotationAngle, float axisTilt){
 		rotationAngle =5f + rotationAngle;
 		if(rotationAngle >=360)
-		rotationAngle = 0f;
-		GL11.glRotatef(rotationAngle, 0f, 1f, 0f ); //  rotate around center
+			rotationAngle = 0f;
+		GL11.glRotatef(rotationAngle, (float)Math.cos(axisTilt), 1f, 0f ); //  rotate around center
 		return rotationAngle;
 	}
 
@@ -265,15 +288,15 @@ public class Universe {
 	public static float[] revolutionPlanet(float centerX, float centerY, float xCoord, float yCoord, float angle, float radius){
 		angle = 0.01f + angle;
 		if(angle >=(2*Math.PI))
-		angle = 0;
+			angle = 0;
 		xCoord = (float)(centerX+Math.sin(angle)*radius);
 		yCoord = (float)(centerY+Math.cos(angle)*radius);
 		return new float[]{xCoord, yCoord, angle};
 	}
 
 	/**
-	* Polls Input from keyboard to create an interactive program
-	*/
+	 * Polls Input from keyboard to create an interactive program
+	 */
 	public static void pollInput() {
 		//Delegates Camera input to the camera class
 		camera.acceptInput(Universe.getDelta());
@@ -281,21 +304,21 @@ public class Universe {
 		//basic movement in the universe on the y axis (Forward, Backward, Left, Right)
 		//Left here for now, but not necessary
 		if(Keyboard.isKeyDown(Keyboard.KEY_UP))
-		camera.move(-1,1);
+			camera.move(-1,1);
 		if(Keyboard.isKeyDown(Keyboard.KEY_DOWN))
-		camera.move(1,1);
+			camera.move(1,1);
 		if(Keyboard.isKeyDown(Keyboard.KEY_LEFT))
-		camera.move(-1,0);
+			camera.move(-1,0);
 		if(Keyboard.isKeyDown(Keyboard.KEY_RIGHT))
-		camera.move(1,0);
+			camera.move(1,0);
 
 		// scroll through key events
 		while (Keyboard.next()) {
 			if (Keyboard.getEventKeyState()) {
 				if (Keyboard.getEventKey() == Keyboard.KEY_ESCAPE)
-				closeRequested = true;
+					closeRequested = true;
 				else if (Keyboard.getEventKey() == Keyboard.KEY_P)
-				snapshot();
+					snapshot();
 			}
 		}
 
@@ -305,8 +328,8 @@ public class Universe {
 	}
 
 	/**
-	* Takes a snapshot from the screen
-	*/
+	 * Takes a snapshot from the screen
+	 */
 	public static void snapshot() {
 		System.out.println("Taking a snapshot ... snapshot.png");
 
@@ -339,8 +362,8 @@ public class Universe {
 	}
 
 	/**
-	* Creates the screen for the simulation to be displayed
-	*/
+	 * Creates the screen for the simulation to be displayed
+	 */
 	private static void createWindow() {
 		try {
 			Display.setDisplayMode(new DisplayMode(800, 600));
@@ -354,15 +377,15 @@ public class Universe {
 	}
 
 	/**
-	* Destroy and clean up resources
-	*/
+	 * Destroy and clean up resources
+	 */
 	private static void cleanup() {
 		Display.destroy();
 	}
 
 	/**
-	* @param args
-	*/
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		Universe.run();
 	}

@@ -13,20 +13,23 @@ public class Planet extends SpaceObject{
 	private Sphere s;
 	
 	private Rings rings;
+	private float axisTilt;
 	
 	private List<Planet> moons = new ArrayList<Planet>();
 
-	public Planet(float r,float or){
+	public Planet(float r,float or, float at){
 		this.radius = r;
 		this.orbitRadius = or;
 		s = new Sphere();
+		axisTilt=at;
 	}
 	
-	public Planet(float r,float or,List<Float []> rspecs, List<Float []> cspecs){
+	public Planet(float r,float or,List<Float []> rspecs, List<Float []> cspecs, float at){
 		this.radius = r;
 		this.orbitRadius = or;
 		s = new Sphere();
 		rings = new Rings(rspecs, cspecs);
+		axisTilt = at;
 	}
 
 	public Sphere getSphere(){
@@ -47,6 +50,11 @@ public class Planet extends SpaceObject{
 	
 	}
 	
+	public float getAxisTilt(){
+		return axisTilt;
+	}
+	
+	
 	public void setRingsTexture(Texture ringsTexture){
 		rings.setTexture(ringsTexture);
 	}
@@ -59,8 +67,8 @@ public class Planet extends SpaceObject{
 		return moons;
 	}
 
-	public void addMoon(float r,float or, Texture moonText){
-		Planet moon = new Planet(r,or);
+	public void addMoon(float r,float or, Texture moonText, float axisTilt){
+		Planet moon = new Planet(r,or, axisTilt);
 		moon.setTexture(moonText);
 		moons.add(moon);
 	}

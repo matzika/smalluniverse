@@ -22,19 +22,19 @@ public class SolarSystem {
 		this.suns = suns;
 	}
 	
-	public void createPlanet(float r, float distance){
-		Planet planet = new Planet(r,distance);
+	public void createPlanet(float r, float distance, float axisTilt){
+		Planet planet = new Planet(r,distance, axisTilt);
 		planets.add(planet);
 	}
 	
-	public void createPlanet(float r, float distance, Texture texture){
-		Planet planet = new Planet(r,distance);
+	public void createPlanet(float r, float distance, Texture texture, float axisTilt){
+		Planet planet = new Planet(r,distance, axisTilt);
 		planet.setTexture(texture);
 		planets.add(planet);
 	}
 	
-	public void createPlanet(float r, float distance, Texture texture, List<Planet> moons){
-		Planet planet = new Planet(r,distance);
+	public void createPlanet(float r, float distance, Texture texture, List<Planet> moons, float axisTilt){
+		Planet planet = new Planet(r,distance, axisTilt);
 		planet.setTexture(texture);
 		
 		planet.addMoons(moons);
@@ -42,8 +42,8 @@ public class SolarSystem {
 		planets.add(planet);
 	}
 	
-	public void createPlanet(float r, float distance, Texture texture, List<Planet> moons,List<Float []> ringsSpecs, List<Float [] > ringsColors){
-		Planet planet = new Planet(r,distance,ringsSpecs,ringsColors);
+	public void createPlanet(float r, float distance, Texture texture, List<Planet> moons,List<Float []> ringsSpecs, List<Float [] > ringsColors, float axisTilt){
+		Planet planet = new Planet(r,distance,ringsSpecs,ringsColors, axisTilt);
 		planet.setTexture(texture);
 	
 		planet.addMoons(moons);
@@ -51,38 +51,38 @@ public class SolarSystem {
 		planets.add(planet);
 	}
 	
-	public void drawVenus(Texture venus){
-		this.createPlanet(1.21f, 250f, venus);
+	public void drawVenus(Texture venus, float axisTilt){
+		this.createPlanet(1.21f, 250f, venus, axisTilt);
 	}
 	
-	public void drawMercury(Texture mercury){
-		this.createPlanet(0.48f, 200f, mercury);
+	public void drawMercury(Texture mercury, float axisTilt){
+		this.createPlanet(0.48f, 200f, mercury, axisTilt);
 	}
 	
-	public void drawEarth(Texture earth, Texture moon){
-		Planet earth_moon = new Planet(0.6f,5f);
+	public void drawEarth(Texture earth, Texture moon, float axisTilt){
+		Planet earth_moon = new Planet(0.6f,5f, axisTilt);
 		earth_moon.setTexture(moon);
 		List<Planet> earth_moons = new ArrayList<Planet>();
 		earth_moons.add(earth_moon);
-		this.createPlanet(1.27f, 350f, earth,earth_moons);
+		this.createPlanet(1.27f, 350f, earth,earth_moons, axisTilt);
 	}
 	
-	public void drawMars(Texture mars, Texture phobos, Texture deimos){
-		Planet mars_moon_a = new Planet(0.22f,3f);
-		Planet mars_moon_b = new Planet(0.14f,5f);
+	public void drawMars(Texture mars, Texture phobos, Texture deimos, float axisTilt){
+		Planet mars_moon_a = new Planet(0.22f,3f, axisTilt);
+		Planet mars_moon_b = new Planet(0.14f,5f, axisTilt);
 		mars_moon_a.setTexture(phobos);
 		mars_moon_b.setTexture(deimos);
 		List<Planet> mars_moons = new ArrayList<Planet>();
 		mars_moons.add(mars_moon_a);
 		mars_moons.add(mars_moon_b);
-		this.createPlanet(0.67f, 400f, mars,mars_moons);
+		this.createPlanet(0.67f, 400f, mars,mars_moons,  axisTilt);
 	}
 	
-	public void drawJupiter(Texture jupiter, Texture io, Texture ganymedes, Texture europa, Texture callisto){
-		Planet jupiter_moon_a = new Planet(1.5f,25f);
-		Planet jupiter_moon_b = new Planet(1.8f,35f);
-		Planet jupiter_moon_c = new Planet(2.6f,48f);
-		Planet jupiter_moon_d = new Planet(2.4f,60f);
+	public void drawJupiter(Texture jupiter, Texture io, Texture ganymedes, Texture europa, Texture callisto, float axisTilt){
+		Planet jupiter_moon_a = new Planet(1.5f,25f, axisTilt);
+		Planet jupiter_moon_b = new Planet(1.8f,35f, axisTilt);
+		Planet jupiter_moon_c = new Planet(2.6f,48f, axisTilt);
+		Planet jupiter_moon_d = new Planet(2.4f,60f, axisTilt);
 		jupiter_moon_a.setTexture(europa);
 		jupiter_moon_b.setTexture(io);
 		jupiter_moon_c.setTexture(ganymedes);
@@ -92,10 +92,10 @@ public class SolarSystem {
 		jupiter_moons.add(jupiter_moon_b);
 		jupiter_moons.add(jupiter_moon_c);
 		jupiter_moons.add(jupiter_moon_d);
-		this.createPlanet(14.29f, 450f,jupiter,jupiter_moons);
+		this.createPlanet(14.29f, 450f,jupiter,jupiter_moons, axisTilt);
 	}
 	
-	public void drawSaturn(Texture saturn){
+	public void drawSaturn(Texture saturn, float axisTilt){
 		List<Planet> saturn_moons = new ArrayList<Planet>();
 		
 		List<Float[] > ringsSpecs = new ArrayList<Float []>();
@@ -131,23 +131,23 @@ public class SolarSystem {
 		ringsSpecs.add(thirdRing);
 		colorSpecs.add(thirdColor);
 		
-		this.createPlanet(12f, 500f, saturn,saturn_moons,ringsSpecs,colorSpecs);
+		this.createPlanet(12f, 500f, saturn,saturn_moons,ringsSpecs,colorSpecs,  axisTilt);
 	}
 	
-	public void drawUranus(Texture uranus){
-		this.createPlanet(5.1f, 550f, uranus);
+	public void drawUranus(Texture uranus, float axisTilt){
+		this.createPlanet(5.1f, 550f, uranus,  axisTilt);
 	}
 	
-	public void drawNeptune(Texture neptune){
-		this.createPlanet(4.9f, 600f, neptune);
+	public void drawNeptune(Texture neptune, float axisTilt){
+		this.createPlanet(4.9f, 600f, neptune, axisTilt);
 	}
 	
-	public void drawPluto(Texture pluto, Texture charon){
-		Planet pluto_moon = new Planet(0.15f,5f);
+	public void drawPluto(Texture pluto, Texture charon, float axisTilt){
+		Planet pluto_moon = new Planet(0.15f,5f, axisTilt);
 		pluto_moon.setTexture(charon);
 		List<Planet> pluto_moons = new ArrayList<Planet>();
 		pluto_moons.add(pluto_moon);
-		this.createPlanet(0.25f, 650f, pluto,pluto_moons);
+		this.createPlanet(0.25f, 650f, pluto,pluto_moons, axisTilt);
 	}
 	
 	public Sun getSun(){
