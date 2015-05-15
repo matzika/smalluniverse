@@ -27,12 +27,12 @@ public class Camera {
   private float rz;
 
   public Camera(){
-    this.x = 200;
+    this.x = 400;
     this.y = 200;
-    this.z = 500;
+    this.z = -500;
     this.rx = 45;
-    this.ry = -30;
-    this.rz = 0;
+    this.ry = 230;
+    this.rz = 10;
   }
   
   public void create() {
