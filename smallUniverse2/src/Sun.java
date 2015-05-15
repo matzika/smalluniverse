@@ -40,8 +40,8 @@ public class Sun extends SpaceObject{
 			System.out.println("TEXURE NULL");
 		GL13.glActiveTexture(GL13.GL_TEXTURE0);
 		channel0.bind();
-		GL13.glActiveTexture(GL13.GL_TEXTURE1);
-		channel1.bind();
+		// GL13.glActiveTexture(GL13.GL_TEXTURE1);
+		// channel1.bind();
 
 		super.draw();
 		s.draw(radius, 64, 64);

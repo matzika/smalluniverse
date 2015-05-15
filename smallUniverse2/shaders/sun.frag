@@ -14,8 +14,8 @@ vec3 getColor(){
 }
 
 void main(){
-	vec4 color = texture2D(texture, gl_TexCoord[0].st) * ( 1. - 2. * noise );
+	vec4 color = texture2D(texture, gl_TexCoord[0].st) * ( 1. - 1. * noise );
 
-  gl_FragColor = color * 2.;
+  gl_FragColor = color;
 
 }

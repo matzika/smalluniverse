@@ -89,7 +89,7 @@ public class Universe {
 
     try {
 			sun = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/sun.png"));
-      sunChannel0 = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/sun0.png"));
+      sunChannel0 = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/sun.png"));
       sunChannel1 = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/sun1.png"));
 
 			mercury = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/mercury.png"));
@@ -184,6 +184,7 @@ public class Universe {
       s.draw();
 
       sunShader.end();
+
       planetShader.begin();
       //get Sun Position (right not hardcoded)
       float[] sunPos = s.getLight().getWorldLocation();
