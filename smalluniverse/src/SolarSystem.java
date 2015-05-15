@@ -52,7 +52,7 @@ public class SolarSystem {
 	}
 
 	public void scaleSize(float s){
-		this.sun.setRadius(sun.getRadius*s);
+		this.sun.setRadius(sun.getRadius()*s);
 
 		for(Planet p : planets){
 			p.setRadius(p.getRadius() * s);
@@ -60,7 +60,7 @@ public class SolarSystem {
 				m.setRadius(m.getRadius() * s);
 			}
 
-			Rings pRings = p.getRings();
+			Planet.Rings pRings = p.getRings();
 			List<Float []> rspecs = pRings.getRSpecs();
 			for(Float[] f : rspecs){
 				for(Float f1 :  f){
@@ -77,7 +77,7 @@ public class SolarSystem {
 			p.setOrbitRadius(p.getOrbitRadius() * s);
 
 			for(Moon m : p.getMoons()){
-				m.setOrbitRadius(m.setOrbitRadius() * s);
+				m.setOrbitRadius(m.getOrbitRadius() * s);
 			}
 		}
 	}
