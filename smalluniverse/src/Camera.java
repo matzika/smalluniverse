@@ -6,10 +6,11 @@ import org.lwjgl.input.Mouse;
 
 /**
 * @class Camera
+* Simulates the camera in the system
+* 
 * @author Aikaterini (Katerina) Iliakopoulou
 * @email ai2315@columbia.edu
 *
-* Simulates the camera
 */
 public class Camera {
   public static float moveSpeed = 2f;
@@ -27,16 +28,16 @@ public class Camera {
   private float rz;
 
   public Camera(){
-    this.x = 0;
-    this.y = 0;
-    this.z = 0;
-    this.rx = 0;
-    this.ry = 0;
+    this.x = 200;
+    this.y = 200;
+    this.z = 500;
+    this.rx = 45;
+    this.ry = -30;
     this.rz = 0;
   }
   
   public void create() {
-      pos = new Vector3f(0, 0, 0);
+      pos = new Vector3f(100, 100, 0);
       rotation = new Vector3f(0, 0, 0);
   }
 
