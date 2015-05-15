@@ -11,6 +11,8 @@ import org.lwjgl.util.glu.Sphere;
 * 
 * @author Aikaterini (Katerina) Iliakopoulou
 * @email ai2315@columbia.edu
+* @author Shloka Kini
+* @email srk2169@columbia.edu
 *
 */
 public class Moon extends SpaceObject{
@@ -28,11 +30,11 @@ public class Moon extends SpaceObject{
      * @param orbitRadius
      * @param axisTilt
      */
-	public Moon(float radius,float orbitRadius, float axisTilt){
+	public Moon(float radius,float orbitRadius, float axisTilt, float speed){
 		this.radius = radius;
 		this.orbitRadius = orbitRadius;
 		this.axisTilt = axisTilt;
-		
+		this.speed = speed;
 		this.rotationAngleDelta = 0.0f;
 		this.revolutionAngleDelta = -5.0f;
 		
@@ -59,6 +61,7 @@ public class Moon extends SpaceObject{
 	 * Draws the moon given its texture, features and shader.
 	 */
 	public void draw(){
+		
 			s.setDrawStyle(GLU.GLU_FILL);
 			s.setTextureFlag(true);
 			GL13.glActiveTexture(GL13.GL_TEXTURE0);

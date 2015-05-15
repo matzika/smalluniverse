@@ -14,6 +14,8 @@ import org.newdawn.slick.opengl.Texture;
  * 
  * @author Aikaterini (Katerina) Iliakopoulou
  * @email ai2315@columbia.edu
+ * @author Shloka Kini
+ * @email srk2169@columbia.edu
  *
  */
 public class Planet extends SpaceObject{
@@ -32,11 +34,11 @@ public class Planet extends SpaceObject{
 	 * @param orbitRadius
 	 * @param axisTilt
 	 */
-	public Planet(float radius,float orbitRadius, float axisTilt){
+	public Planet(float radius,float orbitRadius, float axisTilt, float speed){
 		this.radius = radius;
 		this.orbitRadius = orbitRadius;
 		this.axisTilt = axisTilt;
-		
+		this.speed = speed;
 		s = new Sphere();
 		
 	}
@@ -50,10 +52,11 @@ public class Planet extends SpaceObject{
 	 * @param rspecs
 	 * @param cspecs
 	 */
-	public Planet(float radius,float orbitRadius, float axisTilt,List<Float []> rspecs, List<Float []> cspecs){
+	public Planet(float radius,float orbitRadius, float axisTilt,List<Float []> rspecs, List<Float []> cspecs, float speed){
 		this.radius = radius;
 		this.orbitRadius = orbitRadius;
 		this.axisTilt = axisTilt;
+		this.speed = speed;
 		
 		s = new Sphere();
 		rings = new Rings(rspecs, cspecs);
@@ -101,9 +104,7 @@ public class Planet extends SpaceObject{
 		return s;
 	}
 	
-	public float getAxisTilt(){
-		return axisTilt;
-	}
+
 
 	public void addMoons(List<Moon> moons){
 		this.moons.addAll(moons);
@@ -113,8 +114,8 @@ public class Planet extends SpaceObject{
 		return moons;
 	}
 
-	public void addMoon(float radius,float orbitRadius, float axisTilt,Texture moonText){
-		Moon moon = new Moon(radius,orbitRadius, axisTilt);
+	public void addMoon(float radius,float orbitRadius, float axisTilt,Texture moonText, float speed){
+		Moon moon = new Moon(radius,orbitRadius, axisTilt, speed);
 		moon.setTexture(moonText);
 		moons.add(moon);
 	}

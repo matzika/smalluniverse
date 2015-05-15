@@ -8,6 +8,8 @@ import org.newdawn.slick.opengl.Texture;
  * 
  * @author Aikaterini (Katerina) Iliakopoulou
  * @email ai2315@columbia.edu
+ * @author Shloka Kini
+ * @email srk2169@columbia.edu
  *
  */
 public class SpaceObject {
@@ -15,8 +17,10 @@ public class SpaceObject {
 	//space object's radius, orbit radius and tilt
 	protected float radius;
 	protected float orbitRadius;
-	protected float axisTilt;
-
+	protected float axisTilt; // references an angle for rotational tilt.
+	protected float speed; //  references the speed at which the revolution should update
+	protected float pX;
+	protected float pY;
 	protected int id;
 
 	//material used for object's shader
@@ -42,28 +46,27 @@ public class SpaceObject {
 		//Update the revolution and rotation angles
 		this.revolve();
 		this.rotate();
-
-		GL11.glRotatef(revolutionAngle, 0, 1, 0);
-		GL11.glTranslatef(orbitRadius, 0.0f, 0.0f);
-
-		GL11.glRotatef(axisOffestTheta, 0, 0, 1);
-		GL11.glRotatef(rotationAngle, 0, 1, 0);
-		
-		//this.draw();
 	}
 	
 	/**
 	 * Updates revolution angle
 	 */
 	public void revolve(){
-		this.revolutionAngle += revolutionAngleDelta;
+		
+		float[] coords = revolutionPlanet(0f, 0f,this.getPX(), this.getPY(), this.getRevolutionAngle(), this.getOrbitRadius(), this.getSpeedRate());
+		this.setPX(coords[0]);
+		this.setPY(coords[1]);
+		this.setRevolutionAngle(coords[2]);
+		GL11.glTranslatef(this.getPX(),0f, this.getPY());
+
 	}
 
 	/**
 	 * Updates rotation angle
 	 */
 	public void rotate(){
-		this.rotationAngle += rotationAngleDelta;
+		this.setRotationAngle( rotatePlanet(this.getRotationAngle(), this.getAxisTilt()));
+
 	}
 
 	public Material getMaterial(){
@@ -74,6 +77,12 @@ public class SpaceObject {
 		this.material = mat;
 	}
 
+	
+	public float getSpeedRate(){
+		return speed;
+	}
+	
+	
 	public Texture getTexture(){
 		return this.material.getTexture();
 	}
@@ -86,6 +95,21 @@ public class SpaceObject {
 		return this.revolutionAngle;
 	}
 
+	public void setPX(float x){
+		pX = x;
+	}
+	
+	public float getPX(){
+		return pX;
+	}
+	
+	public void setPY(float y){
+		pY = y;
+	}
+	
+	public float getPY(){
+		return pY;
+	}
 
 	public void setRevolutionAngle(float revolutionAngle){
 		this.revolutionAngle = revolutionAngle;
@@ -131,6 +155,10 @@ public class SpaceObject {
 	public void setOrbitRadius(float orbitRadius){
 		this.orbitRadius = orbitRadius;
 	}
+	
+	public float getAxisTilt(){
+		return axisTilt;
+	}
 
 	public int getId(){
 		return this.id;
@@ -140,4 +168,46 @@ public class SpaceObject {
 		this.id = id;
 	}
 
+	/**
+	 * Given an object's rotation angle, this will update and return that
+	 * rotationAngle and it will rotate the object by that angle amount if run
+	 * after the object's translation but before draw Does the rotation of the
+	 * object
+	 * 
+	 * @param rotationAngle
+	 * @param axisTilt
+	 * @return rotationAngle
+	 */
+	public static float rotatePlanet(float rotationAngle, float axisTilt) {
+		rotationAngle = 5f + rotationAngle;
+		if (rotationAngle >= 360)
+			rotationAngle = 0f;
+		GL11.glRotatef(rotationAngle, (float) Math.cos(axisTilt), 1f, 0f); // rotate
+																			// around
+																			// center
+		return rotationAngle;
+	}
+
+	/**
+	 * Given an object's x/y coordinates, it's angle from the center, the center
+	 * x/y, and radius, it will update the coordinate, the angle, and return
+	 * those values Does the revolution for object
+	 * 
+	 * @param centerX
+	 * @param centerY
+	 * @param xCoord
+	 * @param yCoord
+	 * @param angle
+	 * @param radius
+	 * @return coordinates updated and angle
+	 */
+	public static float[] revolutionPlanet(float centerX, float centerY,
+			float xCoord, float yCoord, float angle, float radius, float speed) {
+		angle = speed + angle;
+		if (angle >= (2 * Math.PI))
+			angle = 0;
+		xCoord = (float) (centerX + Math.sin(angle) * radius);
+		yCoord = (float) (centerY + Math.cos(angle) * radius);
+		return new float[] { xCoord, yCoord, angle };
+	}
 }

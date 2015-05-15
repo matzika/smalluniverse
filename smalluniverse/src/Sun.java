@@ -12,6 +12,8 @@ import org.newdawn.slick.opengl.Texture;
  * 
  * @author Aikaterini (Katerina) Iliakopoulou
  * @email ai2315@columbia.edu
+ * @author Shloka Kini
+ * @email srk2169@columbia.edu
  *
  */
 public class Sun extends SpaceObject{
@@ -49,7 +51,7 @@ public class Sun extends SpaceObject{
 		GL13.glActiveTexture(GL13.GL_TEXTURE1);
 		channel1.bind();
 
-		super.draw();
+//		super.draw();
 		s.draw(radius, 64, 64);
 	}
 

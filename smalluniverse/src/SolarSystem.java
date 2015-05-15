@@ -9,6 +9,8 @@ import org.newdawn.slick.opengl.Texture;
  * 
  * @author Aikaterini (Katerina) Iliakopoulou
  * @email ai2315@columbia.edu
+ * @author Shloka Kini
+ * @email srk2169@columbia.edu
  *
  */
 public class SolarSystem {
@@ -55,8 +57,8 @@ public class SolarSystem {
 	 * @param orbitRadius
 	 * @param axisTilt
 	 */
-	public void createPlanet(float radius, float orbitRadius, float axisTilt){
-		Planet planet = new Planet(radius,orbitRadius, axisTilt);
+	public void createPlanet(float radius, float orbitRadius, float axisTilt, float speed){
+		Planet planet = new Planet(radius,orbitRadius, axisTilt, speed);
 		planets.add(planet);
 	}
 	
@@ -66,8 +68,8 @@ public class SolarSystem {
 	 * @param orbitRadius
 	 * @param axisTilt
 	 */
-	public void createPlanet(float radius, float orbitRadius, float axisTilt, Texture texture){
-		Planet planet = new Planet(radius,orbitRadius, axisTilt);
+	public void createPlanet(float radius, float orbitRadius, float axisTilt, Texture texture, float speed){
+		Planet planet = new Planet(radius,orbitRadius, axisTilt, speed);
 		planet.setTexture(texture);
 		planets.add(planet);
 	}
@@ -78,8 +80,8 @@ public class SolarSystem {
 	 * @param orbitRadius
 	 * @param axisTilt
 	 */
-	public void createPlanet(float radius, float orbitRadius, float axisTilt, Texture texture, List<Moon> moons){
-		Planet planet = new Planet(radius,orbitRadius, axisTilt);
+	public void createPlanet(float radius, float orbitRadius, float axisTilt, Texture texture, List<Moon> moons, float speed){
+		Planet planet = new Planet(radius,orbitRadius, axisTilt, speed);
 		planet.setTexture(texture);
 		
 		for(Moon moon : moons)
@@ -95,8 +97,8 @@ public class SolarSystem {
 	 * @param orbitRadius
 	 * @param axisTilt
 	 */
-	public void createPlanet(float radius, float orbitRadius, float axisTilt, Texture texture, List<Moon> moons,List<Float []> ringsSpecs, List<Float [] > ringsColors){
-		Planet planet = new Planet(radius,orbitRadius, axisTilt, ringsSpecs,ringsColors);
+	public void createPlanet(float radius, float orbitRadius, float axisTilt, Texture texture, List<Moon> moons,List<Float []> ringsSpecs, List<Float [] > ringsColors, float speed){
+		Planet planet = new Planet(radius,orbitRadius, axisTilt, ringsSpecs,ringsColors, speed);
 		planet.setTexture(texture);
 	
 		for(Moon moon : moons)

@@ -10,6 +10,8 @@ import org.lwjgl.input.Mouse;
 * 
 * @author Aikaterini (Katerina) Iliakopoulou
 * @email ai2315@columbia.edu
+* @author Shloka Kini
+* @email srk2169@columbia.edu
 *
 */
 public class Camera {

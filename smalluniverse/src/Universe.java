@@ -210,44 +210,7 @@ public class Universe {
 		
 	}
 
-	/**
-	 * Given an object's rotation angle, this will update and return that rotationAngle
-	 * and it will rotate the object by that angle amount if run after the object's translation but before draw
-	 * Does the rotation of the object
-	 * 
-	 * @param rotationAngle
-	 * @param axisTilt
-	 * @return
-	 */
-	public static float rotatePlanet(float rotationAngle, float axisTilt){
-		rotationAngle =5f + rotationAngle;
-		if(rotationAngle >=360)
-			rotationAngle = 0f;
-		GL11.glRotatef(rotationAngle, (float)Math.cos(axisTilt), 1f, 0f ); //  rotate around center
-		return rotationAngle;
-	}
-
-	/**
-	 * Given an object's x/y coordinates, it's angle from the center, the center x/y, and
-	 * radius, it will update the coordinate, the angle, and return those values
-	 * Does the revolution for object
-	 * 
-	 * @param centerX
-	 * @param centerY
-	 * @param xCoord
-	 * @param yCoord
-	 * @param angle
-	 * @param radius
-	 * @return
-	 */
-	public static float[] revolutionPlanet(float centerX, float centerY, float xCoord, float yCoord, float angle, float radius){
-		angle = 0.01f + angle;
-		if(angle >=(2*Math.PI))
-			angle = 0;
-		xCoord = (float)(centerX+Math.sin(angle)*radius);
-		yCoord = (float)(centerY+Math.cos(angle)*radius);
-		return new float[]{xCoord, yCoord, angle};
-	}
+	
 
 	/**
 	 * Polls Input from keyboard to create an interactive program
