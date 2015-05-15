@@ -166,19 +166,19 @@ public class HomeSolarSystem extends SolarSystem{
 		ringsSpecs.add(thirdRing);
 		colorSpecs.add(thirdColor);
 		
-		this.createPlanet(12f, 500f, 26.73f, saturn, saturn_moons, ringsSpecs,colorSpecs);
+		this.createPlanet(12f, 700f, 26.73f, saturn, saturn_moons, ringsSpecs,colorSpecs);
 	}
 	/*
 	 * Draw uranus and its rings based on planet's radius, orbit and tilt
 	 */
 	private void drawUranus(Texture uranus){
-		this.createPlanet(5.1f, 550f, 97.77f,uranus);
+		this.createPlanet(5.1f, 850f, 97.77f,uranus);
 	}
 	/*
 	 * Draw neptune and its rings based on planet's radius, orbit and tilt
 	 */
 	private void drawNeptune(Texture neptune){
-		this.createPlanet(4.9f, 600f,28.32f, neptune);
+		this.createPlanet(4.9f, 950f,28.32f, neptune);
 	}
 	/*
 	 * Draw pluto and its rings based on planet's radius, orbit and tilt
@@ -189,7 +189,7 @@ public class HomeSolarSystem extends SolarSystem{
 		List<Moon> pluto_moons = new ArrayList<Moon>();
 		pluto_moons.add(pluto_moon);
 		
-		this.createPlanet(0.25f, 650f, 122.53f, pluto, pluto_moons);
+		this.createPlanet(0.25f, 1000f, 122.53f, pluto, pluto_moons);
 	}
 	
 }
