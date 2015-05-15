@@ -2,6 +2,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL13;
 import org.lwjgl.util.glu.Disk;
 import org.lwjgl.util.glu.GLU;
 import org.lwjgl.util.glu.Sphere;
@@ -39,6 +40,7 @@ public class Planet extends SpaceObject{
 		GL11.glPushMatrix();
 			s.setDrawStyle(GLU.GLU_FILL);
 			s.setTextureFlag(true);
+			GL13.glActiveTexture(GL13.GL_TEXTURE0);
 			this.getTexture().bind();
 
 			super.draw();
@@ -53,15 +55,18 @@ public class Planet extends SpaceObject{
 			s.draw(radius, 64, 64);
 
 			if(this.rings != null){
+				planetShader.setUniform1f("isRing", 1.0f);
 				this.rings.draw();
+				planetShader.setUniform1f("isRing", 0.0f);
 			}
 
 			for(Moon m : moons){
 				GL11.glPushMatrix();
-					m.draw();
+				m.draw();
 				GL11.glPopMatrix();
 			}
 		GL11.glPopMatrix();
+
 
 	}
 

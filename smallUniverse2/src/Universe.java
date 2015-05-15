@@ -30,11 +30,13 @@ public class Universe {
 
   long lastFrameTime; // used to calculate delta
 
+  long startTime = Sys.getTime();
+  float time;
   float triangleAngle; // Angle of rotation for the triangles
   float quadAngle; // Angle of rotation for the quads
 
   List<SolarSystem> solarSystems = new ArrayList<SolarSystem>();
-  Texture sun,mercury, venus, earth, mars, jupiter, saturn, uranus, neptune,pluto;
+  Texture sun, sunChannel0, sunChannel1,mercury, venus, earth, mars, jupiter, saturn, uranus, neptune,pluto;
   Texture moon, phobos, deimos, io, callisto, ganymedes, europa, charon, rings;
 
   public void run() {
@@ -45,6 +47,7 @@ public class Universe {
 
     try{
       planetShader = new ShaderProgram("shaders/lighting.vert", "shaders/lighting.frag", true);
+      sunShader = new ShaderProgram("shaders/sun.vert", "shaders/sun.frag", true);
     }catch(Exception e){
       e.printStackTrace();
     }
@@ -86,6 +89,9 @@ public class Universe {
 
     try {
 			sun = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/sun.png"));
+      sunChannel0 = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/sun0.png"));
+      sunChannel1 = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/sun1.png"));
+
 			mercury = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/mercury.png"));
 			venus = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/venus.png"));
 			earth = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/earth.png"));
@@ -117,6 +123,9 @@ public class Universe {
 
   private void createUniverse(){
     Sun solar = new Sun(100f);
+    solar.setChannel0(sunChannel0);
+    solar.setChannel1(sunChannel1);
+
 		SolarSystem ss = new SolarSystem(solar,sun);
 
 		//create mercury
@@ -150,26 +159,32 @@ public class Universe {
   }
 
   private void updateLogic(float delta) {
-
+    this.time = 0.00011f * (Sys.getTime() - startTime);
   }
 
 
   private void renderGL() {
-    planetShader.begin();
+
 
     GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT); // Clear The Screen And The Depth Buffer
     GL11.glLoadIdentity(); // Reset The View
-    GL11.glTranslatef(0.0f, 0.0f, -20.0f); // Move Right And Into The Screen
+    GL11.glTranslatef(0.0f, 0.0f, -200.0f); // Move Right And Into The Screen
 
     Camera.apply();
 
     for(SolarSystem ss : solarSystems){
+      sunShader.begin();
       Sun s = ss.getSun();
+      sunShader.setUniform3f("sunColor", s.getColor()[0], s.getColor()[1], s.getColor()[2]);
+      sunShader.setUniform1f("sunRadius", s.getRadius());
+      sunShader.setUniform1f("time", (float) this.time);
+      sunShader.setUniform1i("texture", 0);
+
       s.updateLightOnCamera(Camera.getPos(), Camera.getRotation());
-      planetShader.setUniform1f("isSun", 1.0f);
       s.draw();
 
-
+      sunShader.end();
+      planetShader.begin();
       //get Sun Position (right not hardcoded)
       float[] sunPos = s.getLight().getWorldLocation();
       float[] sunImd = s.getLight().getDiffuse();
@@ -180,12 +195,33 @@ public class Universe {
       planetShader.setUniform1f("lights[0].intensity", s.getLight().getIntensity());
       planetShader.setUniform4f("lights[0].diffuse", sunImd[0], sunImd[1], sunImd[2], sunImd[3]);
       planetShader.setUniform4f("lights[0].specular", sunIms[0], sunIms[1], sunIms[2], sunIms[3]);
+      planetShader.setUniform3f("windowDim", (float) Display.getWidth(), (float) Display.getHeight(), 1.0f);
 
       for(Planet p : ss.getPlanets()){
         p.draw();
 
       }
+
       planetShader.end();
+
+      for(Planet p : ss.getPlanets()){
+        GL11.glPushMatrix();
+    			GL11.glColor3f(1.0f, 1.0f, 1.0f);
+    			GL11.glLineWidth(0.5f);
+    			GL11.glBegin(GL11.GL_LINE_LOOP);
+    			float angle = 0;
+    			float x=0f, z=0f;
+    			while(angle < (float) (2*Math.PI))
+    			{
+    				x = (float)Math.sin(angle)*p.getOrbitRadius();
+    				z = (float)Math.cos(angle)*p.getOrbitRadius();
+    				GL11.glVertex3f(x,0f, z);
+    				angle = angle + 0.01f;
+    			}
+
+    			GL11.glEnd();
+    		GL11.glPopMatrix();
+      }
 
     }
 

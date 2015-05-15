@@ -1,4 +1,5 @@
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL13;
 import org.lwjgl.util.glu.GLU;
 import org.lwjgl.util.glu.Sphere;
 import org.lwjgl.util.vector.Vector3f;
@@ -6,13 +7,15 @@ import org.lwjgl.util.vector.Vector3f;
 import org.ejml.factory.SingularMatrixException;
 import org.ejml.simple.SimpleMatrix;
 
+import org.newdawn.slick.opengl.Texture;
 
 public class Sun extends SpaceObject{
 	private Sphere s;
 	private Light light;
-	private float[] color1; // for shader
-	private float[] color2; // for shader
+	private float[] color; // for shader
 	private ShaderProgram sunShader;
+	private Texture channel0;
+	private Texture channel1;
 
 	public Sun(float r){
 		this.radius = r;
@@ -24,6 +27,8 @@ public class Sun extends SpaceObject{
 		this.rotationAngleDelta = 0.0f;
 
 		this.orbitRadius = 0.0f;
+
+		color = new float[]{1.0f, .5f, 0.0f};
 	}
 
 	public void draw(){
@@ -33,10 +38,25 @@ public class Sun extends SpaceObject{
 
 		if(this.getTexture() == null)
 			System.out.println("TEXURE NULL");
-		this.getTexture().bind();
+		GL13.glActiveTexture(GL13.GL_TEXTURE0);
+		channel0.bind();
+		GL13.glActiveTexture(GL13.GL_TEXTURE1);
+		channel1.bind();
 
 		super.draw();
 		s.draw(radius, 64, 64);
+	}
+
+	public float[] getColor(){
+		return this.color;
+	}
+
+	public void setChannel0(Texture t){
+		this.channel0 = t;
+	}
+
+	public void setChannel1(Texture t){
+		this.channel1 = t;
 	}
 
 	public Light getLight(){
