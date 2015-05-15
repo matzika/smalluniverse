@@ -145,7 +145,6 @@ public class Universe {
 			system.create();
 			system.setShader(planetShader);
 			
-			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -235,57 +234,6 @@ public class Universe {
 		GL11.glPushMatrix();
 		back.draw(5000, 32, 32);
 		GL11.glPopMatrix();
-	}
-	
-	public static void drawCube(){
-		sky.bind();
-		
-		GL11.glBegin(GL11.GL_QUADS);
-		{
-		//FrontFace
-		//GL11.glColor3f(1f,0f,0f);
-		GL11.glTexCoord2f(0,0); GL11.glVertex3f(-5000,-5000,5000);
-		GL11.glTexCoord2f(0,1); GL11.glVertex3f(5000,-5000,5000);
-		GL11.glTexCoord2f(1,1); GL11.glVertex3f(5000,5000,5000);
-		GL11.glTexCoord2f(1,0); GL11.glVertex3f(-5000,5000,5000);
-
-		//BackFace
-		//GL11.glColor3f(0f,1f,0f);
-		GL11.glTexCoord2f(0,0); GL11.glVertex3f(-5000,-5000,-5000);
-		GL11.glTexCoord2f(0,1); GL11.glVertex3f(-5000,5000,-5000);
-		GL11.glTexCoord2f(1,1); GL11.glVertex3f(5000,5000,-5000);
-		GL11.glTexCoord2f(1,0); GL11.glVertex3f(5000,-5000,-5000);
-
-		//BottomFace
-		//GL11.glColor3f(0f,0f,1f);
-		GL11.glTexCoord2f(0,0); GL11.glVertex3f(-5000,-5000,-5000);
-		GL11.glTexCoord2f(0,1); GL11.glVertex3f(-5000,-5000,5000);
-		GL11.glTexCoord2f(1,1); GL11.glVertex3f(-5000,5000,5000);
-		GL11.glTexCoord2f(1,0); GL11.glVertex3f(-5000,5000,-5000);
-
-		//TopFace
-		//GL11.glColor3f(1f,1f,0f);
-		GL11.glTexCoord2f(0,0); GL11.glVertex3f(5000,-5000,-5000);
-		GL11.glTexCoord2f(0,1); GL11.glVertex3f(5000,-5000,5000);
-		GL11.glTexCoord2f(1,1); GL11.glVertex3f(5000,5000,5000);
-		GL11.glTexCoord2f(1,0); GL11.glVertex3f(5000,5000,-5000);
-
-		//LeftFace
-		//GL11.glColor3f(0f,1f,1f);
-		GL11.glTexCoord2f(0,0); GL11.glVertex3f(-5000,-5000,-5000);
-		GL11.glTexCoord2f(0,1); GL11.glVertex3f(5000,-5000,-5000);
-		GL11.glTexCoord2f(1,1); GL11.glVertex3f(5000,-5000,5000);
-		GL11.glTexCoord2f(1,0); GL11.glVertex3f(-5000,-5000,5000);
-
-		//Right Face
-		//GL11.glColor3f(1f,0f,1f);
-		GL11.glTexCoord2f(0,0); GL11.glVertex3f(-5000,5000,-5000);
-		GL11.glTexCoord2f(0,1); GL11.glVertex3f(5000,5000,-5000);
-		GL11.glTexCoord2f(1,1); GL11.glVertex3f(5000,5000,5000);
-		GL11.glTexCoord2f(1,0); GL11.glVertex3f(-5000,5000,5000);
-		}
-		GL11.glEnd();
- 
 	}
 
 	/**

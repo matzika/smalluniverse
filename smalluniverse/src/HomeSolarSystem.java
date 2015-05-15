@@ -94,14 +94,14 @@ public class HomeSolarSystem extends SolarSystem {
 	 * Draw mercury based on planet's radius, orbit and tilt
 	 */
 	private void drawMercury(Texture mercury) {
-		this.createPlanet(0.48f, 200f, 0.0f, mercury, 0.042f);
+		this.createPlanet(4f, 200f, 0.0f, mercury, 0.042f);
 	}
 
 	/*
 	 * Draw venus based on planet's radius, orbit and tilt
 	 */
 	private void drawVenus(Texture venus) {
-		this.createPlanet(1.21f, 250f, 177.36f, venus, 0.016f);
+		this.createPlanet(6f, 250f, 177.36f, venus, 0.016f);
 	}
 
 	/*
@@ -109,12 +109,12 @@ public class HomeSolarSystem extends SolarSystem {
 	 * tilt
 	 */
 	private void drawEarth(Texture earth, Texture moon) {
-		Moon earth_moon = new Moon(0.6f, 5f, 23.45f, 0.01f);
+		Moon earth_moon = new Moon(0.5f, 5f, 23.45f, 0.01f);
 		earth_moon.setTexture(moon);
 		List<Moon> earth_moons = new ArrayList<Moon>();
 		earth_moons.add(earth_moon);
 
-		this.createPlanet(1.27f, 350f, 23.45f, earth, earth_moons, 0.01f);
+		this.createPlanet(10f, 380f, 23.45f, earth, earth_moons, 0.01f);
 	}
 
 	/*
@@ -130,7 +130,7 @@ public class HomeSolarSystem extends SolarSystem {
 		mars_moons.add(mars_moon_a);
 		mars_moons.add(mars_moon_b);
 
-		this.createPlanet(0.67f, 400f, 25.19f, mars, mars_moons, 0.0053f);
+		this.createPlanet(6f, 480f, 25.19f, mars, mars_moons, 0.0053f);
 	}
 
 	/*
@@ -153,7 +153,7 @@ public class HomeSolarSystem extends SolarSystem {
 		 jupiter_moons.add(jupiter_moon_c);
 		 jupiter_moons.add(jupiter_moon_d);
 
-		this.createPlanet(14.29f, 450f, 3.13f, jupiter, jupiter_moons, 0.00084f);
+		this.createPlanet(14.29f, 600f, 3.13f, jupiter, jupiter_moons, 0.00084f);
 	}
 
 	/*

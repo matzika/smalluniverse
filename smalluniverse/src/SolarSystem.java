@@ -52,21 +52,28 @@ public class SolarSystem {
 	}
 
 	public void scaleSize(float s){
-		this.sun.setRadius(sun.getRadius()*s);
+		//this.sun.setRadius(sun.getRadius()*s);
 
 		for(Planet p : planets){
 			p.setRadius(p.getRadius() * s);
 			for(Moon m : p.getMoons()){
 				m.setRadius(m.getRadius() * s);
 			}
-
+			
 			Planet.Rings pRings = p.getRings();
-			List<Float []> rspecs = pRings.getRSpecs();
-			for(Float[] f : rspecs){
-				for(Float f1 :  f){
-					f1 *= s;
+			if(pRings != null){
+				List<Float []> rspecs = pRings.getRSpecs();
+				
+				for(int i=0;i<rspecs.size();i++){
+					Float[] nf = new Float[2];
+					nf[0] =  (rspecs.get(i)[0]*s);
+					nf[1] =  (rspecs.get(i)[1]*s);
+					rspecs.set(i,nf);
 				}
+				
+				p.getRings().setRSpecs(rspecs);
 			}
+			
 		}
 	}
 
