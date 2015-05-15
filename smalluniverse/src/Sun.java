@@ -9,7 +9,7 @@ import org.newdawn.slick.opengl.Texture;
 /**
  * @class Sun
  * Implements a sun object in the universe
- * 
+ *
  * @author Aikaterini (Katerina) Iliakopoulou
  * @email ai2315@columbia.edu
  * @author Shloka Kini
@@ -19,7 +19,7 @@ import org.newdawn.slick.opengl.Texture;
 public class Sun extends SpaceObject{
 	private Sphere s;
 	private Light light;
-	
+
 	private float[] color; // for shader
 	private ShaderProgram sunShader;
 	private Texture channel0;
@@ -173,9 +173,9 @@ public class Sun extends SpaceObject{
 		float[] lpos = light.getLocation();
 		//get position
 		double[][] posA = new double[][]{
-			{(double) lpos[0]},
-			{(double) lpos[1]},
-			{(double) lpos[2]},
+			{(double) this.getPX()},
+			{(double) this.getPY()},
+			{(double) 0.0},
 			{1}
 		};
 		SimpleMatrix pos = new SimpleMatrix(posA);
@@ -201,7 +201,7 @@ public class Sun extends SpaceObject{
 
 		SimpleMatrix resultT = rev.mult(tor.mult(pos));
 
-		light.setLocation(new float[]{(float) resultT.get(0), (float) resultT.get(1), (float) resultT.get(2)});
+		light.setWorldLocation(new float[]{(float) resultT.get(0), (float) resultT.get(1), (float) resultT.get(2)});
 
 
 	}

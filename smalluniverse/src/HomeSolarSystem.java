@@ -10,12 +10,12 @@ import org.newdawn.slick.util.ResourceLoader;
 /**
  * @class HomeSolarSystem Implements our home solar system with the sun at its
  *        center and nine planets and their moons
- * 
+ *
  * @author Aikaterini (Katerina) Iliakopoulou
  * @email ai2315@columbia.edu
  * @author Shloka Kini
  * @email srk2169@columbia.edu
- * 
+ *
  */
 public class HomeSolarSystem extends SolarSystem {
 
@@ -66,6 +66,8 @@ public class HomeSolarSystem extends SolarSystem {
 		charon = TextureLoader.getTexture("PNG",
 				ResourceLoader.getResourceAsStream("res/charon.png"));
 	}
+
+	
 
 	public void create() {
 		// create mercury
@@ -223,5 +225,5 @@ public class HomeSolarSystem extends SolarSystem {
 		this.createPlanet(0.25f, 1000f, 122.53f, pluto, pluto_moons, 0.000040f);
 	}
 
-	
+
 }

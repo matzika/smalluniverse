@@ -8,8 +8,8 @@ public class Light{
 
   public Light(){
     //default values for light props
-	diffuse = new float[]{1.0f, 1.0f, 1.0f, 1.0f};
-	specular = new float[]{0.8f, 0.8f, 0.8f, 1.0f};
+	   diffuse = new float[]{1.0f, 1.0f, 1.0f, 1.0f};
+	   specular = new float[]{0.8f, 0.8f, 0.8f, 1.0f};
     location = new float[]{0.0f, 0.0f, 0.0f};
     intensity = 1.0f;
   }

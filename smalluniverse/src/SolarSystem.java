@@ -5,8 +5,8 @@ import org.newdawn.slick.opengl.Texture;
 
 /**
  * @class SolarSystem
- * Implements a solar system object that can have a  number of suns, planets and moons  
- * 
+ * Implements a solar system object that can have a  number of suns, planets and moons
+ *
  * @author Aikaterini (Katerina) Iliakopoulou
  * @email ai2315@columbia.edu
  * @author Shloka Kini
@@ -15,15 +15,15 @@ import org.newdawn.slick.opengl.Texture;
  */
 public class SolarSystem {
 	private Sun sun;
-	
+
 	private List<Sun> suns;
-	
+
 	private List<Planet> planets = new ArrayList<Planet>();
-	
+
 	private float[] location; //Location in the universe
-	
+
 	private ShaderProgram planetShader;
-	
+
 	public SolarSystem(){
 		this.location = new float[]{0.0f, 0.0f, 0.0f};
 	}
@@ -36,11 +36,11 @@ public class SolarSystem {
 		this.sun = sun;
 		this.sun.setTexture(sunTexture);
 	}
-	
+
 	public SolarSystem(List<Sun> suns){
 		this.suns = suns;
 	}
-	
+
 	public void setShader(ShaderProgram planetShader){
 		this.planetShader = planetShader;
 		for(Planet p : planets){
@@ -50,7 +50,38 @@ public class SolarSystem {
 	      }
 	    }
 	}
-	
+
+	public void scaleSize(float s){
+		this.sun.setRadius(sun.getRadius*s);
+
+		for(Planet p : planets){
+			p.setRadius(p.getRadius() * s);
+			for(Moon m : p.getMoons()){
+				m.setRadius(m.getRadius() * s);
+			}
+
+			Rings pRings = p.getRings();
+			List<Float []> rspecs = pRings.getRSpecs();
+			for(Float[] f : rspecs){
+				for(Float f1 :  f){
+					f1 *= s;
+				}
+			}
+		}
+	}
+
+	public void scaleRadius(float s){
+		this.sun.setOrbitRadius(sun.getOrbitRadius() * s);
+
+		for(Planet p : planets){
+			p.setOrbitRadius(p.getOrbitRadius() * s);
+
+			for(Moon m : p.getMoons()){
+				m.setOrbitRadius(m.setOrbitRadius() * s);
+			}
+		}
+	}
+
 	/**
 	 * Creates a planet with a radius, orbitRadius and tilt
 	 * @param radius
@@ -61,7 +92,7 @@ public class SolarSystem {
 		Planet planet = new Planet(radius,orbitRadius, axisTilt, speed);
 		planets.add(planet);
 	}
-	
+
 	/**
 	 * Creates a planet with a radius, orbitRadius, tilt and a texture
 	 * @param radius
@@ -73,7 +104,7 @@ public class SolarSystem {
 		planet.setTexture(texture);
 		planets.add(planet);
 	}
-	
+
 	/**
 	 * Creates a planet with a radius, orbitRadius, tilt, texture and a number of moons
 	 * @param radius
@@ -83,14 +114,14 @@ public class SolarSystem {
 	public void createPlanet(float radius, float orbitRadius, float axisTilt, Texture texture, List<Moon> moons, float speed){
 		Planet planet = new Planet(radius,orbitRadius, axisTilt, speed);
 		planet.setTexture(texture);
-		
+
 		for(Moon moon : moons)
 			moon.setCenter(planet);
 		planet.addMoons(moons);
-			
+
 		planets.add(planet);
 	}
-	
+
 	/**
 	 * Creates a planet with a radius, orbitRadius, tilt, texture, a number of moons and rings
 	 * @param radius
@@ -100,18 +131,18 @@ public class SolarSystem {
 	public void createPlanet(float radius, float orbitRadius, float axisTilt, Texture texture, List<Moon> moons,List<Float []> ringsSpecs, List<Float [] > ringsColors, float speed){
 		Planet planet = new Planet(radius,orbitRadius, axisTilt, ringsSpecs,ringsColors, speed);
 		planet.setTexture(texture);
-	
+
 		for(Moon moon : moons)
 			moon.setCenter(planet);
 		planet.addMoons(moons);
-		
+
 		planets.add(planet);
 	}
-	
+
 	public Sun getSun(){
 		return this.sun;
 	}
-	
+
 	public List<Planet> getPlanets(){
 		return this.planets;
 	}

@@ -34,6 +34,7 @@ void main(){
     vec3 e = normalize(vec3(eye));
 
     for(int i = 0; i < 5; i ++){
+      //vec3 lightPos = vec3(gl_ProjectionMatrix * vec4(lights[i].position,1.0));
       vec3 lightPos = vec3(lights[i].position);
       vec3 lightDir = normalize(lightPos - vec3(pos));
 
@@ -49,9 +50,11 @@ void main(){
     }
 
     gl_FragColor = diffuse + spec;
+    gl_FragColor.a = 1.0;
   }
   else{
     gl_FragColor = texture2D(mat.texture, gl_TexCoord[0].st);
+    gl_FragColor.a = 1.0;
   }
 
 }
