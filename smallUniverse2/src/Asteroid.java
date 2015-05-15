@@ -25,10 +25,12 @@ public class Asteroid{
   private float[] worldCoordinates;
   private float spawnDistance;
   private float currentDistance;
-  private float velocity = 0.5f;
+  private float velocity = 6.0f;
   private float radius;
   private Sphere s;
   private Material m;
+
+  private ShaderProgram sp;
 
 
   public Asteroid(float spawn, float r){
@@ -47,6 +49,12 @@ public class Asteroid{
       GL11.glRotatef(theta, 0, 1, 0);
       GL11.glTranslatef(currentDistance, 0.0f, 0.0f);
 
+      float[] spec = m.getSpecular();
+			float shi = m.getShininess();
+      sp.setUniform4f("mat.specular", spec[0], spec[1], spec[2], spec[3]);
+      sp.setUniform1f("mat.shininess", shi);
+      sp.setUniform1i("mat.texture", 0);
+
       s.setDrawStyle(GLU.GLU_FILL);
 			s.setTextureFlag(true);
 			GL13.glActiveTexture(GL13.GL_TEXTURE0);
@@ -58,6 +66,10 @@ public class Asteroid{
 
     currentDistance -= velocity;
     updateWorldCoordinates();
+  }
+
+  public void setShader(ShaderProgram p){
+    this.sp = p;
   }
 
   public void setTexture(Texture t){

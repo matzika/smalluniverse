@@ -36,8 +36,13 @@ public class Universe {
   float quadAngle; // Angle of rotation for the quads
 
   List<SolarSystem> solarSystems = new ArrayList<SolarSystem>();
+  List<Asteroid> asteroids = new ArrayList<Asteroid>();
+
   Texture sun, sunChannel0, sunChannel1,mercury, venus, earth, mars, jupiter, saturn, uranus, neptune,pluto;
   Texture moon, phobos, deimos, io, callisto, ganymedes, europa, charon, rings;
+  Texture asteroid;
+
+  Asteroid a;
 
   public void run() {
 
@@ -115,6 +120,8 @@ public class Universe {
 
 			rings = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/rings.png"));
 
+      asteroid = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/asteroid.png"));
+
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -156,6 +163,11 @@ public class Universe {
         m.setShader(planetShader);
       }
     }
+
+    a = new Asteroid(600.0f, 10.0f);
+    a.setTexture(asteroid);
+    a.setShader(planetShader);
+
   }
 
   private void updateLogic(float delta) {
@@ -172,6 +184,8 @@ public class Universe {
 
     Camera.apply();
 
+
+
     for(SolarSystem ss : solarSystems){
       sunShader.begin();
       Sun s = ss.getSun();
@@ -182,7 +196,6 @@ public class Universe {
 
       s.updateLightOnCamera(Camera.getPos(), Camera.getRotation());
       s.draw();
-
       sunShader.end();
 
       planetShader.begin();
@@ -197,6 +210,9 @@ public class Universe {
       planetShader.setUniform4f("lights[0].diffuse", sunImd[0], sunImd[1], sunImd[2], sunImd[3]);
       planetShader.setUniform4f("lights[0].specular", sunIms[0], sunIms[1], sunIms[2], sunIms[3]);
       planetShader.setUniform3f("windowDim", (float) Display.getWidth(), (float) Display.getHeight(), 1.0f);
+
+      //draw asteroid
+      a.draw();
 
       for(Planet p : ss.getPlanets()){
         p.draw();

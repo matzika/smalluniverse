@@ -52,13 +52,16 @@ public class Planet extends SpaceObject{
 			planetShader.setUniform1f("mat.shininess", shi);
 			planetShader.setUniform1i("mat.texture", 0);
 
-			s.draw(radius, 64, 64);
-
 			if(this.rings != null){
 				planetShader.setUniform1f("isRing", 1.0f);
+				GL11.glPushMatrix();
+				GL11.glRotatef(-this.rotationAngle, 0, 1, 0);
 				this.rings.draw();
 				planetShader.setUniform1f("isRing", 0.0f);
+				GL11.glPopMatrix();
 			}
+
+			s.draw(radius, 64, 64);
 
 			for(Moon m : moons){
 				GL11.glPushMatrix();
@@ -68,6 +71,11 @@ public class Planet extends SpaceObject{
 		GL11.glPopMatrix();
 
 
+	}
+
+	public float[] getWorldCoordinates(){
+			//TODO: do world coordinate calculations
+			return null;
 	}
 
 	public void setShader(ShaderProgram p){
