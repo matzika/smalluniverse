@@ -11,8 +11,8 @@ public class Material{
     //default values for material props
 		diffuse = new float[]{1.0f, 0.0f, 0.0f, 1.0f};
 		ambient = new float[]{0.2f, 0.0f, 0.0f, 1.0f};
-		specular = new float[]{0.8f, 0.8f, 0.8f, 1.0f};
-		shininess = 10.0f;
+		specular = new float[]{0.0f, 0.0f, 0.0f, 1.0f};
+		shininess = 1.0f;
     texture = null;
   }
 

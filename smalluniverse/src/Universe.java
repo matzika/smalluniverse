@@ -14,7 +14,6 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.util.glu.Disk;
 import org.lwjgl.util.glu.GLU;
 
 import org.newdawn.slick.opengl.TextureLoader;
@@ -23,30 +22,42 @@ import org.newdawn.slick.util.ResourceLoader;;
 
 
 public class Universe {
-	static long lastFrameTime; // used to calculate delta
-
-	static String windowTitle = "A small universe";
+	
+	static String windowTitle = "Small Universe";
 
 	public static boolean closeRequested = false;
 
 	static Camera camera;
 
 	static ShaderProgram sunShader;
-	static ShaderProgram lightShader;
+	static ShaderProgram planetShader;
 
 	static int snapshot_count = 0;
+	
+	static long lastFrameTime; // used to calculate delta
+	static long startTime = Sys.getTime();
+	
+	static float time;
+	
+	float triangleAngle; // Angle of rotation for the triangles
+	float quadAngle; // Angle of rotation for the quads
 
+	//support multiple solar systems
 	static List<SolarSystem> solarSystems = new ArrayList<SolarSystem>();
-	private static Texture sun,mercury, venus, earth, mars, jupiter, saturn, uranus, neptune,pluto;
-	private static Texture moon, phobos, deimos, io, callisto, ganymedes, europa, charon, rings;
-
+	static HomeSolarSystem system;
+	
+	//load the textures for planets and moons
+	private static Texture sun, sunChannel0, sunChannel1;
+	
 	public static void run() {
 		Universe.createWindow();
+		Universe.getDelta();
 		Universe.initGL();
 
 		//create shaders
 		try{
-			Universe.lightShader = new ShaderProgram("shaders/lighting.vert", "shaders/lighting.frag", true);
+			planetShader = new ShaderProgram("shaders/lighting.vert", "shaders/lighting.frag", true);
+		    sunShader = new ShaderProgram("shaders/sun.vert", "shaders/sun.frag", true);
 		}catch(Exception e){
 			e.printStackTrace();
 		}
@@ -54,13 +65,14 @@ public class Universe {
 		//creates the camera
 		camera = new Camera();
 
+		//create universe
 		Universe.createUniverse();
-		Universe.getDelta(); // Initialise delta timer
 
 		while (!closeRequested) {
 			Universe.pollInput();
 			Universe.updateLogic(Universe.getDelta());
 			Universe.renderGL();
+			
 			Display.sync(60);
 			Display.update();
 		}
@@ -81,7 +93,7 @@ public class Universe {
 		GL11.glMatrixMode(GL11.GL_PROJECTION); // Select The Projection Matrix
 		GL11.glLoadIdentity(); // Reset The Projection Matrix
 
-		GLU.gluPerspective(100, ((float) width / (float) height), 0.1f, 6000); //set perpective projection
+		GLU.gluPerspective(60, ((float) width / (float) height), 0.1f, 1000.0f); //set perpective projection
 		GL11.glMatrixMode(GL11.GL_MODELVIEW); // Select The Modelview Matrix
 		GL11.glLoadIdentity(); // Reset The Modelview Matrix
 
@@ -97,29 +109,11 @@ public class Universe {
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
 		try {
+			//read sun's textures
 			sun = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/sun.png"));
-			mercury = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/mercury.png"));
-			venus = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/venus.png"));
-			earth = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/earth.png"));
-			mars = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/mars.png"));
-			jupiter = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/jupiter.png"));
-			saturn = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/saturn.png"));
-
-			uranus = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/uranus.png"));
-			neptune = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/neptune.png"));
-			pluto = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/pluto.png"));
-
-			//moon - textures
-			moon = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/moon.png"));
-			phobos = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/phobos.png"));
-			deimos = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/deimos.png"));
-			europa = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/europa.png"));
-			io = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/io.png"));
-			ganymedes = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/ganymede.png"));
-			callisto = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/callisto.png"));
-			charon = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/charon.png"));
-
-			rings = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/rings.png"));
+		    sunChannel0 = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/sun0.png"));
+		    sunChannel1 = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/sun1.png"));
+		    
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -130,30 +124,19 @@ public class Universe {
 
 	public static void createUniverse(){
 		Sun solar = new Sun(100f);
-		SolarSystem ss = new SolarSystem(solar,sun);
-
-		//create mercury
-		ss.drawMercury(mercury, 0);
-		//create venus
-		ss.drawVenus(venus, 177.36f);
-		//create earth and moon
-		ss.drawEarth(earth, moon, 23.45f);
-		//create mars and its moons
-		ss.drawMars(mars, phobos, deimos, 25.19f);
-		//create Jupiter
-		ss.drawJupiter(jupiter, io, ganymedes, europa, callisto, 3.13f);
-		//create Saturn
-		ss.drawSaturn(saturn, 26.73f);
-		//create Uranus
-		ss.drawUranus(uranus, 97.77f);
-		//create Neptune
-		ss.drawNeptune(neptune, 28.32f);
-		//create Pluto
-		ss.drawPluto(pluto,charon, 122.53f);
-
-
-		solarSystems.add(ss);
-
+	    solar.setChannel0(sunChannel0);
+	    solar.setChannel1(sunChannel1);
+	    
+		try {
+			system = new HomeSolarSystem(solar,sun);
+			system.create();
+			system.setShader(planetShader);
+			
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public static int getDelta() {
@@ -165,115 +148,77 @@ public class Universe {
 	}
 
 	private static void updateLogic(float delta) {
-
+		time = 0.00011f * (Sys.getTime() - startTime);
 	}
 
 	private static void renderGL() {
 
-		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT); // Clear The Screen And The Depth Buffer
-		GL11.glLoadIdentity(); // Reset The View
-		GL11.glTranslatef(0.0f, 0.0f, -20f);
+	    GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT); // Clear The Screen And The Depth Buffer
+	    GL11.glLoadIdentity(); // Reset The View
+	    GL11.glTranslatef(0.0f, 0.0f, -200.0f); // Move Right And Into The Screen
+		
 		camera.apply();
-		for(SolarSystem ss : solarSystems){
-			GL11.glTranslatef(0.0f, 0.0f, -200f);
-			GL11.glPushMatrix();
-			{
-				GL11.glColor3f(1f,1f,0f);
-				ss.getSun().draw();
+		
+		sunShader.begin();
+	    Sun s = system.getSun();
+	    sunShader.setUniform3f("sunColor", s.getColor()[0], s.getColor()[1], s.getColor()[2]);
+	    sunShader.setUniform1f("sunRadius", s.getRadius());
+	    sunShader.setUniform1f("time", (float) time);
+	    sunShader.setUniform1i("texture", 0);
 
-				//Light shader should not apply to sun
-				/*lightShader.begin();
-				float[] sunPos = ss.getSun().getLight().getLocation();
-				float[] sunImd = ss.getSun().getLight().getDiffuse();
-				float[] sunIms = ss.getSun().getLight().getSpecular();
+	    s.updateLightOnCamera(camera.getPos(), camera.getRotation());
+	    s.draw();
+		
+	    sunShader.end();
+	    planetShader.begin();
+	    //get Sun Position (right not hardcoded)
+	    float[] sunPos = s.getLight().getWorldLocation();
+	    float[] sunImd = s.getLight().getDiffuse();
+		float[] sunIms = s.getLight().getSpecular();
+		  
+		planetShader.setUniform1f("isSun", 0.0f);
+	    planetShader.setUniform3f("lights[0].position", sunPos[0], sunPos[1], sunPos[2]);
+	    planetShader.setUniform1f("lights[0].intensity", s.getLight().getIntensity());
+	    planetShader.setUniform4f("lights[0].diffuse", sunImd[0], sunImd[1], sunImd[2], sunImd[3]);
+	    planetShader.setUniform4f("lights[0].specular", sunIms[0], sunIms[1], sunIms[2], sunIms[3]);
+	    planetShader.setUniform3f("windowDim", (float) Display.getWidth(), (float) Display.getHeight(), 1.0f);
+		  
+	    for(Planet p : system.getPlanets()){
+	        p.draw();
+	    }
+	    
+	    planetShader.end();
+	    
+	    for(Planet p : system.getPlanets()){
+	        GL11.glPushMatrix();
+	    	GL11.glColor3f(1.0f, 1.0f, 1.0f);
+	    	GL11.glLineWidth(0.5f);
+	    	GL11.glBegin(GL11.GL_LINE_LOOP);
+	    	float angle = 0;
+	    	float x=0f, z=0f;
+	    	while(angle < (float) (2*Math.PI))
+	    	{
+	    		x = (float)Math.sin(angle)*p.getOrbitRadius();
+	    		z = (float)Math.cos(angle)*p.getOrbitRadius();
+	    		GL11.glVertex3f(x,0f, z);
+	    		angle = angle + 0.01f;
+	    	}
 
-				lightShader.setUniform3f("lights[0].position", sunPos[0], sunPos[1], sunPos[2]);
-				lightShader.setUniform1f("lights[0].intensity", ss.getSun().getLight().getIntensity());
-				lightShader.setUniform4f("lights[0].diffuse", sunImd[0], sunImd[1], sunImd[2], sunImd[3]);
-				lightShader.setUniform4f("lights[0].specular", sunIms[0], sunIms[1], sunIms[2], sunIms[3]);
-				 */
-				int counter = 0;
-				for(Planet p : ss.getPlanets()){
-
-					GL11.glPushMatrix();
-					float[] coords = revolutionPlanet(0f, 0f,p.getPX(), p.getPY(), p.getRevolutionAngle(), p.getOrbitRadius());
-					p.setPX(coords[0]);
-					p.setPY(coords[1]);
-					p.setRevolutionAngle(coords[2]);
-					GL11.glTranslatef(p.getPX(),0f, p.getPY());
-//					GL11.glTranslatef(1.0f, 0.0f,- p.getOrbitRadius());
-					
-					p.setRotationAngle( rotatePlanet(p.getRotationAngle(), p.getAxisTilt()));
-
-					
-					p.draw();
-
-					//Get Material for Planet
-					Material planetMat = p.getMaterial();
-					float[] s = planetMat.getSpecular();
-					float shi = planetMat.getShininess();
-
-					//lightShader.setUniform4f("mat.specular", s[0], s[1], s[2], s[3]);
-					//lightShader.setUniform1f("mat.shininess", shi);
-					//lightShader.setUniform1i("mat.texture", 0);
-
-					for(Planet m : p.getMoons()){
-
-						GL11.glPushMatrix();
-						float[] mcoords = revolutionPlanet(0f, 0f,m.getPX(), m.getPY(), m.getRevolutionAngle(), m.getOrbitRadius());
-						m.setPX(mcoords[0]);
-						m.setPY(mcoords[1]);
-						//m.setRevolutionAngle(mcoords[2]);
-						GL11.glTranslatef(m.getPX(),0f, m.getPY());
-//						GL11.glTranslatef(m.getPX(), m.getPY(),- m.getOrbitRadius());
-						m.setRotationAngle( rotatePlanet(m.getRotationAngle(), 0f));
-						m.draw();
-
-						Material moonMat = m.getMaterial();
-						float[] ms = moonMat.getSpecular();
-						float mshi = moonMat.getShininess();
-
-						//lightShader.setUniform4f("mat.specular", ms[0], ms[1], ms[2], ms[3]);
-						//lightShader.setUniform1f("mat.shininess", mshi);
-						//lightShader.setUniform1i("mat.texture", 0);
-						GL11.glPopMatrix();
-					}
-					
-
-					
-					
-					
-					
-					GL11.glPopMatrix();
-					counter = counter + 1;
-					
-					GL11.glPushMatrix();
-					GL11.glColor3f(1.0f, 1.0f, 0f);
-					GL11.glLineWidth(3.0f);
-					GL11.glBegin(GL11.GL_LINE_LOOP);
-					float angle = 0;
-					float x=0f, z=0f;
-					while(angle < (float) (2*Math.PI))
-					{
-						x = (float)Math.sin(angle)*p.getOrbitRadius();
-						z = (float)Math.cos(angle)*p.getOrbitRadius();
-						GL11.glVertex3f(x,0f, z);
-						angle = angle + 0.01f;
-					}
-
-					GL11.glEnd();
-					GL11.glPopMatrix();
-
-				}
-				//lightShader.end();
-			}
-			GL11.glPopMatrix();
-		}
+	    	GL11.glEnd();
+	    	GL11.glPopMatrix();
+	     }
+		
 	}
 
-	//Given an object's rotation angle, this will update and return that rotationAngle
-	//And it will rotate the object by that angle amount if run
-	//after the object's translation but before draw
+	/**
+	 * Given an object's rotation angle, this will update and return that rotationAngle
+	 * and it will rotate the object by that angle amount if run after the object's translation but before draw
+	 * Does the rotation of the object
+	 * 
+	 * @param rotationAngle
+	 * @param axisTilt
+	 * @return
+	 */
 	public static float rotatePlanet(float rotationAngle, float axisTilt){
 		rotationAngle =5f + rotationAngle;
 		if(rotationAngle >=360)
@@ -282,9 +227,19 @@ public class Universe {
 		return rotationAngle;
 	}
 
-	//Given an object's x/y coordinates, it's angle from the center, the center x/y, and
-	//radius, it will update the coordinate, the angle, and return those values
-	//Does the revolution for object
+	/**
+	 * Given an object's x/y coordinates, it's angle from the center, the center x/y, and
+	 * radius, it will update the coordinate, the angle, and return those values
+	 * Does the revolution for object
+	 * 
+	 * @param centerX
+	 * @param centerY
+	 * @param xCoord
+	 * @param yCoord
+	 * @param angle
+	 * @param radius
+	 * @return
+	 */
 	public static float[] revolutionPlanet(float centerX, float centerY, float xCoord, float yCoord, float angle, float radius){
 		angle = 0.01f + angle;
 		if(angle >=(2*Math.PI))

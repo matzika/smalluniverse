@@ -1,6 +1,8 @@
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
+
 
 /**
 * @class Camera
@@ -12,6 +14,9 @@ import org.lwjgl.input.Mouse;
 public class Camera {
   public static float moveSpeed = 2f;
   public static float mouseSensitivity = 0.05f;
+  
+  private Vector3f pos;
+  private Vector3f rotation;
 
   private float x;
   private float y;
@@ -29,6 +34,11 @@ public class Camera {
     this.ry = 0;
     this.rz = 0;
   }
+  
+  public void create() {
+      pos = new Vector3f(0, 0, 0);
+      rotation = new Vector3f(0, 0, 0);
+  }
 
   /**
   * apply correct movement to the camera
@@ -44,6 +54,9 @@ public class Camera {
     GL11.glRotatef(ry, 0, 1, 0);
     GL11.glRotatef(rz, 0, 0, 1);
     GL11.glTranslatef(-x, -y, -z);
+    
+    pos = new Vector3f(x, y, z);
+    rotation = new Vector3f(rx, ry, rz);
   }
 
   public void acceptInput(float delta) {
@@ -60,6 +73,8 @@ public class Camera {
       ry += mouseDX * mouseSensitivity * delta;
       rx += mouseDY * mouseSensitivity * delta;
       //rx = Math.max(-maxLook, Math.min(maxLook, rx));
+      
+      rotation = new Vector3f(rx, ry, rz);
     }
   }
 
@@ -108,9 +123,27 @@ public class Camera {
       x += Math.sin(Math.toRadians(ry + 90)) * speed;
       z -= Math.cos(Math.toRadians(ry + 90)) * speed;
     }
+    
+    pos = new Vector3f(x, y, z);
+    rotation = new Vector3f(rx, ry, rz);
+  }
+  
+  public void setPos(Vector3f pos) {
+      this.pos = pos;
   }
 
+  public Vector3f getPos() {
+	  return pos;
+  }
+  
+  public Vector3f getRotation() {
+      return rotation;
+  }
 
+  public void setRotationX(float x) {
+      rotation.x = x;
+  }
+    
   public float getX()
   {
     return x;

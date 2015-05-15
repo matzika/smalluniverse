@@ -1,17 +1,34 @@
 import java.util.ArrayList;
 import java.util.List;
 
-import org.lwjgl.util.glu.Disk;
-import org.lwjgl.util.glu.GLU;
 import org.newdawn.slick.opengl.Texture;
 
-
+/**
+ * @class SolarSystem
+ * Implements a solar system object that can have a  number of suns, planets and moons  
+ * 
+ * @author Aikaterini (Katerina) Iliakopoulou
+ * @email ai2315@columbia.edu
+ *
+ */
 public class SolarSystem {
 	private Sun sun;
 	
 	private List<Sun> suns;
 	
 	private List<Planet> planets = new ArrayList<Planet>();
+	
+	private float[] location; //Location in the universe
+	
+	private ShaderProgram planetShader;
+	
+	public SolarSystem(){
+		this.location = new float[]{0.0f, 0.0f, 0.0f};
+	}
+
+	public SolarSystem(float[] l){
+		this.location = l;
+	}
 
 	public SolarSystem(Sun sun,Texture sunTexture){
 		this.sun = sun;
@@ -22,132 +39,71 @@ public class SolarSystem {
 		this.suns = suns;
 	}
 	
-	public void createPlanet(float r, float distance, float axisTilt){
-		Planet planet = new Planet(r,distance, axisTilt);
+	public void setShader(ShaderProgram planetShader){
+		this.planetShader = planetShader;
+		for(Planet p : planets){
+	      p.setShader(planetShader);
+	      for(Moon m : p.getMoons()){
+	        m.setShader(planetShader);
+	      }
+	    }
+	}
+	
+	/**
+	 * Creates a planet with a radius, orbitRadius and tilt
+	 * @param radius
+	 * @param orbitRadius
+	 * @param axisTilt
+	 */
+	public void createPlanet(float radius, float orbitRadius, float axisTilt){
+		Planet planet = new Planet(radius,orbitRadius, axisTilt);
 		planets.add(planet);
 	}
 	
-	public void createPlanet(float r, float distance, Texture texture, float axisTilt){
-		Planet planet = new Planet(r,distance, axisTilt);
+	/**
+	 * Creates a planet with a radius, orbitRadius, tilt and a texture
+	 * @param radius
+	 * @param orbitRadius
+	 * @param axisTilt
+	 */
+	public void createPlanet(float radius, float orbitRadius, float axisTilt, Texture texture){
+		Planet planet = new Planet(radius,orbitRadius, axisTilt);
 		planet.setTexture(texture);
 		planets.add(planet);
 	}
 	
-	public void createPlanet(float r, float distance, Texture texture, List<Planet> moons, float axisTilt){
-		Planet planet = new Planet(r,distance, axisTilt);
+	/**
+	 * Creates a planet with a radius, orbitRadius, tilt, texture and a number of moons
+	 * @param radius
+	 * @param orbitRadius
+	 * @param axisTilt
+	 */
+	public void createPlanet(float radius, float orbitRadius, float axisTilt, Texture texture, List<Moon> moons){
+		Planet planet = new Planet(radius,orbitRadius, axisTilt);
 		planet.setTexture(texture);
 		
+		for(Moon moon : moons)
+			moon.setCenter(planet);
 		planet.addMoons(moons);
 			
 		planets.add(planet);
 	}
 	
-	public void createPlanet(float r, float distance, Texture texture, List<Planet> moons,List<Float []> ringsSpecs, List<Float [] > ringsColors, float axisTilt){
-		Planet planet = new Planet(r,distance,ringsSpecs,ringsColors, axisTilt);
+	/**
+	 * Creates a planet with a radius, orbitRadius, tilt, texture, a number of moons and rings
+	 * @param radius
+	 * @param orbitRadius
+	 * @param axisTilt
+	 */
+	public void createPlanet(float radius, float orbitRadius, float axisTilt, Texture texture, List<Moon> moons,List<Float []> ringsSpecs, List<Float [] > ringsColors){
+		Planet planet = new Planet(radius,orbitRadius, axisTilt, ringsSpecs,ringsColors);
 		planet.setTexture(texture);
 	
+		for(Moon moon : moons)
+			moon.setCenter(planet);
 		planet.addMoons(moons);
 		
 		planets.add(planet);
-	}
-	
-	public void drawVenus(Texture venus, float axisTilt){
-		this.createPlanet(1.21f, 250f, venus, axisTilt);
-	}
-	
-	public void drawMercury(Texture mercury, float axisTilt){
-		this.createPlanet(0.48f, 200f, mercury, axisTilt);
-	}
-	
-	public void drawEarth(Texture earth, Texture moon, float axisTilt){
-		Planet earth_moon = new Planet(0.6f,5f, axisTilt);
-		earth_moon.setTexture(moon);
-		List<Planet> earth_moons = new ArrayList<Planet>();
-		earth_moons.add(earth_moon);
-		this.createPlanet(1.27f, 350f, earth,earth_moons, axisTilt);
-	}
-	
-	public void drawMars(Texture mars, Texture phobos, Texture deimos, float axisTilt){
-		Planet mars_moon_a = new Planet(0.22f,3f, axisTilt);
-		Planet mars_moon_b = new Planet(0.14f,5f, axisTilt);
-		mars_moon_a.setTexture(phobos);
-		mars_moon_b.setTexture(deimos);
-		List<Planet> mars_moons = new ArrayList<Planet>();
-		mars_moons.add(mars_moon_a);
-		mars_moons.add(mars_moon_b);
-		this.createPlanet(0.67f, 400f, mars,mars_moons,  axisTilt);
-	}
-	
-	public void drawJupiter(Texture jupiter, Texture io, Texture ganymedes, Texture europa, Texture callisto, float axisTilt){
-		Planet jupiter_moon_a = new Planet(1.5f,25f, axisTilt);
-		Planet jupiter_moon_b = new Planet(1.8f,35f, axisTilt);
-		Planet jupiter_moon_c = new Planet(2.6f,48f, axisTilt);
-		Planet jupiter_moon_d = new Planet(2.4f,60f, axisTilt);
-		jupiter_moon_a.setTexture(europa);
-		jupiter_moon_b.setTexture(io);
-		jupiter_moon_c.setTexture(ganymedes);
-		jupiter_moon_d.setTexture(callisto);
-		List<Planet> jupiter_moons = new ArrayList<Planet>();
-		jupiter_moons.add(jupiter_moon_a);
-		jupiter_moons.add(jupiter_moon_b);
-		jupiter_moons.add(jupiter_moon_c);
-		jupiter_moons.add(jupiter_moon_d);
-		this.createPlanet(14.29f, 450f,jupiter,jupiter_moons, axisTilt);
-	}
-	
-	public void drawSaturn(Texture saturn, float axisTilt){
-		List<Planet> saturn_moons = new ArrayList<Planet>();
-		
-		List<Float[] > ringsSpecs = new ArrayList<Float []>();
-		List<Float[] > colorSpecs = new ArrayList<Float []>();
-		
-		Float[] firstRing = new Float[2];
-		firstRing[0] = 16f;
-		firstRing[1] = 17f;
-		Float[] firstColor = new Float[3];
-		firstColor[0] = 139f;
-		firstColor[1] = 131f;
-		firstColor[2] = 120f;
-		ringsSpecs.add(firstRing);
-		colorSpecs.add(firstColor);
-		
-		Float[] secondRing = new Float[2];
-		secondRing[0] = 17f;
-		secondRing[1] = 19f;
-		Float[] secondColor = new Float[3];
-		secondColor[0] = 255f;
-		secondColor[1] = 239f;
-		secondColor[2] = 219f;
-		ringsSpecs.add(secondRing);
-		colorSpecs.add(secondColor);
-		
-		Float[] thirdRing = new Float[2];
-		thirdRing[0] = 20f;
-		thirdRing[1] = 22f;
-		Float[] thirdColor = new Float[3];
-		thirdColor[0] = 205f;
-		thirdColor[1] = 192f;
-		thirdColor[2] = 176f;
-		ringsSpecs.add(thirdRing);
-		colorSpecs.add(thirdColor);
-		
-		this.createPlanet(12f, 500f, saturn,saturn_moons,ringsSpecs,colorSpecs,  axisTilt);
-	}
-	
-	public void drawUranus(Texture uranus, float axisTilt){
-		this.createPlanet(5.1f, 550f, uranus,  axisTilt);
-	}
-	
-	public void drawNeptune(Texture neptune, float axisTilt){
-		this.createPlanet(4.9f, 600f, neptune, axisTilt);
-	}
-	
-	public void drawPluto(Texture pluto, Texture charon, float axisTilt){
-		Planet pluto_moon = new Planet(0.15f,5f, axisTilt);
-		pluto_moon.setTexture(charon);
-		List<Planet> pluto_moons = new ArrayList<Planet>();
-		pluto_moons.add(pluto_moon);
-		this.createPlanet(0.25f, 650f, pluto,pluto_moons, axisTilt);
 	}
 	
 	public Sun getSun(){

@@ -1,22 +1,69 @@
+import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.opengl.Texture;
 
+/**
+ * @class SpaceObject
+ * Class that implements a space object in the universe
+ * This class is extended by all other objects in the program (planets, moons, etc.)
+ * 
+ * @author Aikaterini (Katerina) Iliakopoulou
+ * @email ai2315@columbia.edu
+ *
+ */
 public class SpaceObject {
 
+	//space object's radius, orbit radius and tilt
 	protected float radius;
 	protected float orbitRadius;
+	protected float axisTilt;
 
 	protected int id;
 
+	//material used for object's shader
 	protected Material material;
 
-	protected  float rotationVal = 0;
-	protected  float revolutionAngle = 0;
+	//space object's angles with regards to rotation, revolution and tilt
+	protected float rotationAngle = 0.0f;
+	protected float revolutionAngle = 0.0f;
+	protected float axisOffestTheta = 0.0f; //an offset theta from the y axis
 
-	protected float pX =0f;
-	protected float pY = 0f;
+	//delta value for changing rotation and revolution angles
+	protected float rotationAngleDelta = 4.0f;
+	protected float revolutionAngleDelta = 0.1f;
 
 	public SpaceObject(){
 		this.material = new Material();
+	}
+	
+	/**
+	 * Draws the space object based on its features 
+	 */
+	public void draw(){
+		//Update the revolution and rotation angles
+		this.revolve();
+		this.rotate();
+
+		GL11.glRotatef(revolutionAngle, 0, 1, 0);
+		GL11.glTranslatef(orbitRadius, 0.0f, 0.0f);
+
+		GL11.glRotatef(axisOffestTheta, 0, 0, 1);
+		GL11.glRotatef(rotationAngle, 0, 1, 0);
+		
+		//this.draw();
+	}
+	
+	/**
+	 * Updates revolution angle
+	 */
+	public void revolve(){
+		this.revolutionAngle += revolutionAngleDelta;
+	}
+
+	/**
+	 * Updates rotation angle
+	 */
+	public void rotate(){
+		this.rotationAngle += rotationAngleDelta;
 	}
 
 	public Material getMaterial(){
@@ -35,45 +82,38 @@ public class SpaceObject {
 		this.material.setTexture(texture);
 	}
 
-	public void draw(){
-		this.draw();
-	}
-
-
-	public float getPX(){
-		return pX;
-	}
-
-	public float getPY(){
-		return pY;
-	}
-
-
-	public void setPX(float x){
-		pX = x;
-	}
-
-	public void setPY(float y){
-		pY = y;
-	}
-
-
 	public float getRevolutionAngle(){
 		return this.revolutionAngle;
 	}
 
 
-	public void setRevolutionAngle(float x){
-		revolutionAngle = x;
+	public void setRevolutionAngle(float revolutionAngle){
+		this.revolutionAngle = revolutionAngle;
 	}
 
 	public float getRotationAngle(){
-		return this.rotationVal;
+		return this.rotationAngle;
 	}
 
 
-	public void setRotationAngle(float x){
-		rotationVal = x;
+	public void setRotationAngle(float rotationAngle){
+		this.rotationAngle = rotationAngle;
+	}
+	
+	public float getRevolutionDelta(){
+		return this.revolutionAngleDelta;
+	}
+
+	public void setRevolutionDelta(float d){
+		this.revolutionAngleDelta = d;
+	}
+
+	public float getRotationDelta(){
+		return this.rotationAngleDelta;
+	}
+
+	public void setRotationDelta(float d){
+		this.rotationAngleDelta = d;
 	}
 
 	public float getRadius(){
