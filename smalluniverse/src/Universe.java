@@ -20,7 +20,15 @@ import org.newdawn.slick.opengl.TextureLoader;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.util.ResourceLoader;;
 
-
+/**
+ * @class Universe
+ * The main class of the program implements the small universe
+ * The user can navigate around with the keyboard
+ * 
+ * @author Aikaterini (Katerina) Iliakopoulou
+ * @email ai2315@columbia.edu
+ *
+ */
 public class Universe {
 	
 	static String windowTitle = "Small Universe";
@@ -93,7 +101,7 @@ public class Universe {
 		GL11.glMatrixMode(GL11.GL_PROJECTION); // Select The Projection Matrix
 		GL11.glLoadIdentity(); // Reset The Projection Matrix
 
-		GLU.gluPerspective(60, ((float) width / (float) height), 0.1f, 1000.0f); //set perpective projection
+		GLU.gluPerspective(80, ((float) width / (float) height), 0.1f, 6000.0f); //set perpective projection
 		GL11.glMatrixMode(GL11.GL_MODELVIEW); // Select The Modelview Matrix
 		GL11.glLoadIdentity(); // Reset The Modelview Matrix
 
@@ -217,18 +225,36 @@ public class Universe {
 	 */
 	public static void pollInput() {
 		//Delegates Camera input to the camera class
-		camera.acceptInput(Universe.getDelta());
+		//camera.acceptInput(Universe.getDelta());
 
 		//basic movement in the universe on the y axis (Forward, Backward, Left, Right)
-		//Left here for now, but not necessary
+		
 		if(Keyboard.isKeyDown(Keyboard.KEY_UP))
-			camera.move(-1,1);
+			camera.moveY(-1,1);
 		if(Keyboard.isKeyDown(Keyboard.KEY_DOWN))
-			camera.move(1,1);
+			camera.moveY(1,1);
 		if(Keyboard.isKeyDown(Keyboard.KEY_LEFT))
-			camera.move(-1,0);
+			camera.moveY(-1,0);
 		if(Keyboard.isKeyDown(Keyboard.KEY_RIGHT))
-			camera.move(1,0);
+			camera.moveY(1,0);
+		if(Keyboard.isKeyDown(Keyboard.KEY_W))
+			camera.moveZ(-1,1);
+		if(Keyboard.isKeyDown(Keyboard.KEY_E))
+			camera.moveZ(+1,0);
+		if(Keyboard.isKeyDown(Keyboard.KEY_Q))
+			camera.moveZ(-1,0);
+		if(Keyboard.isKeyDown(Keyboard.KEY_S))
+			camera.moveZ(1,1);
+		if(Keyboard.isKeyDown(Keyboard.KEY_X))
+			camera.moveX(-1,1);
+		if(Keyboard.isKeyDown(Keyboard.KEY_A))
+			camera.moveX(-1,0);
+		if(Keyboard.isKeyDown(Keyboard.KEY_D))
+			camera.moveX(1,0);
+		if(Keyboard.isKeyDown(Keyboard.KEY_Z))
+			camera.moveX(-1,0);
+		if(Keyboard.isKeyDown(Keyboard.KEY_O))
+			camera.moveX(1,0);
 
 		// scroll through key events
 		while (Keyboard.next()) {

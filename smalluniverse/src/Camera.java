@@ -212,9 +212,19 @@ public class Camera {
   * @param dir1
   * @param dir2
   */
-  public void move(float dir1, float dir2){
+  public void moveY(float dir1, float dir2){
     z += dir1* moveSpeed * Math.sin(Math.toRadians(ry + 90 * dir2));
     x += dir1* moveSpeed * Math.cos(Math.toRadians(ry + 90 * dir2));
+  }
+  
+  public void moveZ(float dir1, float dir2){
+	y += dir1* moveSpeed * Math.sin(Math.toRadians(rz + 90 * dir2));
+	x += dir1* moveSpeed * Math.cos(Math.toRadians(rz + 90 * dir2));
+  }
+  
+  public void moveX(float dir1, float dir2){
+	y += dir1* moveSpeed * Math.sin(Math.toRadians(rx + 90 * dir2));
+	z += dir1* moveSpeed * Math.cos(Math.toRadians(rx + 90 * dir2));
   }
 
   public void moveForward(){
@@ -233,7 +243,15 @@ public class Camera {
     x += moveSpeed;
   }
 
-  public void rotateY(){
-    ry += moveSpeed;
+  public void rotateY(int dir){
+    ry += dir * moveSpeed;
+  }
+  
+  public void rotateX(int dir){
+	rx += dir * moveSpeed;
+  }
+  
+  public void rotateZ(int dir){
+	rz += dir * moveSpeed;
   }
 }
