@@ -1,6 +1,5 @@
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector3f;
-import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
 
@@ -10,13 +9,11 @@ import org.lwjgl.input.Mouse;
 * 
 * @author Aikaterini (Katerina) Iliakopoulou
 * @email ai2315@columbia.edu
-* @author Shloka Kini
-* @email srk2169@columbia.edu
 *
 */
 public class Camera {
   public static float moveSpeed = 2f;
-  public static float mouseSensitivity = 0.05f;
+  public static float mouseSensitivity = 0.01f;
   
   private Vector3f pos;
   private Vector3f rotation;
@@ -82,51 +79,6 @@ public class Camera {
   }
 
   public void acceptInputMove(float delta) {
-    boolean keyUp = Keyboard.isKeyDown(Keyboard.KEY_W);
-    boolean keyDown = Keyboard.isKeyDown(Keyboard.KEY_S);
-    boolean keyRight = Keyboard.isKeyDown(Keyboard.KEY_D);
-    boolean keyLeft = Keyboard.isKeyDown(Keyboard.KEY_A);
-    boolean keyFast = Keyboard.isKeyDown(Keyboard.KEY_Q);
-    boolean keySlow = Keyboard.isKeyDown(Keyboard.KEY_E);
-    boolean keyFlyUp = Keyboard.isKeyDown(Keyboard.KEY_SPACE);
-    boolean keyFlyDown = Keyboard.isKeyDown(Keyboard.KEY_LSHIFT);
-
-    float speed;
-
-    if (keyFast) {
-      speed = moveSpeed * 10;
-    } else if (keySlow) {
-      speed = moveSpeed / 2;
-    } else {
-      speed = moveSpeed;
-    }
-
-    speed *= delta;
-
-    if (keyFlyUp) {
-      y += speed;
-    }
-    if (keyFlyDown) {
-      y -= speed;
-    }
-
-    if (keyDown) {
-      x -= Math.sin(Math.toRadians(ry)) * speed;
-      z += Math.cos(Math.toRadians(ry)) * speed;
-    }
-    if (keyUp) {
-      x += Math.sin(Math.toRadians(ry)) * speed;
-      z -= Math.cos(Math.toRadians(ry)) * speed;
-    }
-    if (keyLeft) {
-      x += Math.sin(Math.toRadians(ry - 90)) * speed;
-      z -= Math.cos(Math.toRadians(ry - 90)) * speed;
-    }
-    if (keyRight) {
-      x += Math.sin(Math.toRadians(ry + 90)) * speed;
-      z -= Math.cos(Math.toRadians(ry + 90)) * speed;
-    }
-    
     pos = new Vector3f(x, y, z);
     rotation = new Vector3f(rx, ry, rz);
   }
@@ -253,5 +205,65 @@ public class Camera {
   
   public void rotateZ(int dir){
 	rz += dir * moveSpeed;
+  }
+  
+  public void setSpeed(float speed) {
+      moveSpeed = speed;
+  }
+
+  public void addToX(float x) {
+      pos.x += x;
+  }
+
+  public void addToY(float y) {
+      pos.y += y;
+  }
+
+  public void addToZ(float z) {
+      pos.z += z;
+  }
+
+  public void setRotation(Vector3f rotation) {
+      this.rotation = rotation;
+  }
+
+  public float getRotationX() {
+      return rotation.x;
+  }
+
+  public void addToRotationX(float x) {
+      rotation.x += x;
+  }
+
+  public void setRotationY(float y) {
+      rotation.y = y;
+  }
+
+  public float getRotationY() {
+      return rotation.y;
+  }
+
+  public void addToRotationY(float y) {
+      rotation.y += y;
+  }
+
+  public void setRotationZ(float z) {
+      rotation.z = z;
+  }
+
+  public float getRotationZ() {
+      return rotation.z;
+  }
+
+  public void addToRotationZ(float z) {
+      rotation.z += z;
+  }
+
+  public void setMouseSensitivity(float mouseSensitivity) {
+      Camera.mouseSensitivity = mouseSensitivity;
+  }
+
+  public float getMouseSensitivity() {
+      return mouseSensitivity;
   }
 }

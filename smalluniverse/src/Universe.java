@@ -15,6 +15,7 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
+import org.lwjgl.util.glu.Sphere;
 
 import org.newdawn.slick.opengl.TextureLoader;
 import org.newdawn.slick.opengl.Texture;
@@ -24,13 +25,15 @@ import org.newdawn.slick.util.ResourceLoader;;
  * @class Universe
  * The main class of the program implements the small universe
  * The user can navigate around with the keyboard
- *
+ * 
  * @author Aikaterini (Katerina) Iliakopoulou
  * @email ai2315@columbia.edu
+ * @author Shloka Kini
+ * @email srk2169@columbia.edu
  *
  */
 public class Universe {
-
+	
 	static String windowTitle = "Small Universe";
 
 	public static boolean closeRequested = false;
@@ -41,22 +44,22 @@ public class Universe {
 	static ShaderProgram planetShader;
 
 	static int snapshot_count = 0;
-
+	
 	static long lastFrameTime; // used to calculate delta
 	static long startTime = Sys.getTime();
-
+	
 	static float time;
-
+	
 	float triangleAngle; // Angle of rotation for the triangles
 	float quadAngle; // Angle of rotation for the quads
 
 	//support multiple solar systems
 	static List<SolarSystem> solarSystems = new ArrayList<SolarSystem>();
 	static HomeSolarSystem system;
-
+	
 	//load the textures for planets and moons
-	private static Texture sun, sunChannel0, sunChannel1;
-
+	private static Texture sun, sunChannel0, sunChannel1, sky;
+	
 	public static void run() {
 		Universe.createWindow();
 		Universe.getDelta();
@@ -80,7 +83,7 @@ public class Universe {
 			Universe.pollInput();
 			Universe.updateLogic(Universe.getDelta());
 			Universe.renderGL();
-
+			
 			Display.sync(60);
 			Display.update();
 		}
@@ -121,7 +124,9 @@ public class Universe {
 			sun = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/sun.png"));
 		    sunChannel0 = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/sun0.png"));
 		    sunChannel1 = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/sun1.png"));
-
+		    
+		    sky = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/background.png"));
+		    
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -134,13 +139,13 @@ public class Universe {
 		Sun solar = new Sun(100f);
 	    solar.setChannel0(sunChannel0);
 	    solar.setChannel1(sunChannel1);
-
+	    
 		try {
 			system = new HomeSolarSystem(solar,sun);
 			system.create();
 			system.setShader(planetShader);
-
-
+			
+			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -164,9 +169,11 @@ public class Universe {
 	    GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT); // Clear The Screen And The Depth Buffer
 	    GL11.glLoadIdentity(); // Reset The View
 	    GL11.glTranslatef(0.0f, 0.0f, -200.0f); // Move Right And Into The Screen
-
+		
 		camera.apply();
-
+		
+		drawBackground();
+		
 		sunShader.begin();
 	    Sun s = system.getSun();
 	    sunShader.setUniform3f("sunColor", s.getColor()[0], s.getColor()[1], s.getColor()[2]);
@@ -176,27 +183,27 @@ public class Universe {
 
 	    s.updateLightOnCamera(camera.getPos(), camera.getRotation());
 	    s.draw();
-
+		
 	    sunShader.end();
 	    planetShader.begin();
-
+	    //get Sun Position (right not hardcoded)
 	    float[] sunPos = s.getLight().getWorldLocation();
 	    float[] sunImd = s.getLight().getDiffuse();
-			float[] sunIms = s.getLight().getSpecular();
-
-			planetShader.setUniform1f("isSun", 0.0f);
+		float[] sunIms = s.getLight().getSpecular();
+		  
+		planetShader.setUniform1f("isSun", 0.0f);
 	    planetShader.setUniform3f("lights[0].position", sunPos[0], sunPos[1], sunPos[2]);
 	    planetShader.setUniform1f("lights[0].intensity", s.getLight().getIntensity());
 	    planetShader.setUniform4f("lights[0].diffuse", sunImd[0], sunImd[1], sunImd[2], sunImd[3]);
 	    planetShader.setUniform4f("lights[0].specular", sunIms[0], sunIms[1], sunIms[2], sunIms[3]);
 	    planetShader.setUniform3f("windowDim", (float) Display.getWidth(), (float) Display.getHeight(), 1.0f);
-
+		  
 	    for(Planet p : system.getPlanets()){
 	        p.draw();
 	    }
-
+	    
 	    planetShader.end();
-
+	    
 	    for(Planet p : system.getPlanets()){
 	        GL11.glPushMatrix();
 	    	GL11.glColor3f(1.0f, 1.0f, 1.0f);
@@ -215,20 +222,81 @@ public class Universe {
 	    	GL11.glEnd();
 	    	GL11.glPopMatrix();
 	     }
-
+		
 	}
+	
+	public static void drawBackground(){
+		Sphere back = new Sphere();
+		
+		back.setDrawStyle(GLU.GLU_FILL);
+		back.setTextureFlag(true);
+		
+		sky.bind();
+		GL11.glPushMatrix();
+		back.draw(5000, 32, 32);
+		GL11.glPopMatrix();
+	}
+	
+	public static void drawCube(){
+		sky.bind();
+		
+		GL11.glBegin(GL11.GL_QUADS);
+		{
+		//FrontFace
+		//GL11.glColor3f(1f,0f,0f);
+		GL11.glTexCoord2f(0,0); GL11.glVertex3f(-5000,-5000,5000);
+		GL11.glTexCoord2f(0,1); GL11.glVertex3f(5000,-5000,5000);
+		GL11.glTexCoord2f(1,1); GL11.glVertex3f(5000,5000,5000);
+		GL11.glTexCoord2f(1,0); GL11.glVertex3f(-5000,5000,5000);
 
+		//BackFace
+		//GL11.glColor3f(0f,1f,0f);
+		GL11.glTexCoord2f(0,0); GL11.glVertex3f(-5000,-5000,-5000);
+		GL11.glTexCoord2f(0,1); GL11.glVertex3f(-5000,5000,-5000);
+		GL11.glTexCoord2f(1,1); GL11.glVertex3f(5000,5000,-5000);
+		GL11.glTexCoord2f(1,0); GL11.glVertex3f(5000,-5000,-5000);
 
+		//BottomFace
+		//GL11.glColor3f(0f,0f,1f);
+		GL11.glTexCoord2f(0,0); GL11.glVertex3f(-5000,-5000,-5000);
+		GL11.glTexCoord2f(0,1); GL11.glVertex3f(-5000,-5000,5000);
+		GL11.glTexCoord2f(1,1); GL11.glVertex3f(-5000,5000,5000);
+		GL11.glTexCoord2f(1,0); GL11.glVertex3f(-5000,5000,-5000);
+
+		//TopFace
+		//GL11.glColor3f(1f,1f,0f);
+		GL11.glTexCoord2f(0,0); GL11.glVertex3f(5000,-5000,-5000);
+		GL11.glTexCoord2f(0,1); GL11.glVertex3f(5000,-5000,5000);
+		GL11.glTexCoord2f(1,1); GL11.glVertex3f(5000,5000,5000);
+		GL11.glTexCoord2f(1,0); GL11.glVertex3f(5000,5000,-5000);
+
+		//LeftFace
+		//GL11.glColor3f(0f,1f,1f);
+		GL11.glTexCoord2f(0,0); GL11.glVertex3f(-5000,-5000,-5000);
+		GL11.glTexCoord2f(0,1); GL11.glVertex3f(5000,-5000,-5000);
+		GL11.glTexCoord2f(1,1); GL11.glVertex3f(5000,-5000,5000);
+		GL11.glTexCoord2f(1,0); GL11.glVertex3f(-5000,-5000,5000);
+
+		//Right Face
+		//GL11.glColor3f(1f,0f,1f);
+		GL11.glTexCoord2f(0,0); GL11.glVertex3f(-5000,5000,-5000);
+		GL11.glTexCoord2f(0,1); GL11.glVertex3f(5000,5000,-5000);
+		GL11.glTexCoord2f(1,1); GL11.glVertex3f(5000,5000,5000);
+		GL11.glTexCoord2f(1,0); GL11.glVertex3f(-5000,5000,5000);
+		}
+		GL11.glEnd();
+ 
+	}
 
 	/**
 	 * Polls Input from keyboard to create an interactive program
 	 */
 	public static void pollInput() {
 		//Delegates Camera input to the camera class
-		//camera.acceptInput(Universe.getDelta());
+		camera.acceptInput(Universe.getDelta());
 
 		//basic movement in the universe on the y axis (Forward, Backward, Left, Right)
-
+		
 		if(Keyboard.isKeyDown(Keyboard.KEY_UP))
 			camera.moveY(-1,1);
 		if(Keyboard.isKeyDown(Keyboard.KEY_DOWN))
