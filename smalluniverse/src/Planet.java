@@ -87,7 +87,10 @@ public class Planet extends SpaceObject{
 
 			if(this.rings != null){
 				planetShader.setUniform1f("isRing", 1.0f);
+				GL11.glPushMatrix();
+				GL11.glRotatef(-this.rotationAngle, 0, 1, 0);
 				this.rings.draw();
+				GL11.glPopMatrix();
 				planetShader.setUniform1f("isRing", 0.0f);
 			}
 
