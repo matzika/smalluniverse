@@ -141,6 +141,7 @@ public class SolarSystem {
 
 		for(Moon moon : moons)
 			moon.setCenter(planet);
+		
 		planet.addMoons(moons);
 
 		planets.add(planet);

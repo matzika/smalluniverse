@@ -116,15 +116,18 @@ void main(){
 
   gl_TexCoord[0] = gl_MultiTexCoord0;
   texC = vec2(gl_MultiTexCoord0);
-
+	
+	
+	//Generate Some noise
   noise = 5.0 * 0.05 * turbulence(0.5 * normal + time);
-
+	
+	//Use perlin noise to generate the offset for the vertex
   float b = 5.0 * pnoise( 0.05 * vec3(gl_Vertex) + vec3(2.0*time), vec3( 100.0 ) );
 
   displacement = -1.0 * noise + b;
 
   vec3 newPosition = vec3(gl_Vertex) + normal * displacement;
-
+	//New vertex position
   gl_Position = gl_ModelViewProjectionMatrix * vec4(newPosition, 1.0);
   //gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
 }

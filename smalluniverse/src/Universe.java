@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import javax.imageio.ImageIO;
 
@@ -16,6 +17,7 @@ import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
 import org.lwjgl.util.glu.Sphere;
+import org.lwjgl.util.vector.Vector3f;
 
 import org.newdawn.slick.opengl.TextureLoader;
 import org.newdawn.slick.opengl.Texture;
@@ -52,13 +54,16 @@ public class Universe {
 	
 	float triangleAngle; // Angle of rotation for the triangles
 	float quadAngle; // Angle of rotation for the quads
+	
+	static ArrayList<Asteroid> asteroids = new ArrayList<Asteroid>();
+	static ArrayList<Asteroid> asteroidsDeleted = new ArrayList<Asteroid>();
 
 	//support multiple solar systems
 	static List<SolarSystem> solarSystems = new ArrayList<SolarSystem>();
 	static HomeSolarSystem system;
 	
 	//load the textures for planets and moons
-	private static Texture sun, sunChannel0, sunChannel1, sky;
+	private static Texture sun, sunChannel0, sunChannel1, sky, asteroidTex;
 	
 	public static void run() {
 		Universe.createWindow();
@@ -122,10 +127,11 @@ public class Universe {
 		try {
 			//read sun's textures
 			sun = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/sun.png"));
-		    sunChannel0 = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/sun0.png"));
+		    sunChannel0 = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/sun.png"));
 		    sunChannel1 = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/sun1.png"));
 		    
 		    sky = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/background.png"));
+		    asteroidTex = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/asteroid.png"));
 		    
 
 		} catch (IOException e) {
@@ -149,6 +155,7 @@ public class Universe {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
 	}
 
 	public static int getDelta() {
@@ -161,13 +168,22 @@ public class Universe {
 
 	private static void updateLogic(float delta) {
 		time = 0.00011f * (Sys.getTime() - startTime);
+		
 	}
 
 	private static void renderGL() {
-
+		asteroids.removeAll(asteroidsDeleted);
+		if(Math.random() > .99){
+			Asteroid a = new Asteroid(1000.0f, (float) Math.random()*(5));
+			
+			a.setTexture(asteroidTex);
+			a.setShader(planetShader);
+			asteroids.add(a);
+		}
+		
 	    GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT); // Clear The Screen And The Depth Buffer
 	    GL11.glLoadIdentity(); // Reset The View
-	    GL11.glTranslatef(0.0f, 0.0f, -200.0f); // Move Right And Into The Screen
+	    GL11.glTranslatef(0.0f, 0.0f, 0.0f); // Move Right And Into The Screen
 		
 		camera.apply();
 		
@@ -184,24 +200,30 @@ public class Universe {
 	    s.draw();
 		
 	    sunShader.end();
+	    	    
 	    planetShader.begin();
-	    //get Sun Position (right not hardcoded)
 	    float[] sunPos = s.getLight().getWorldLocation();
 	    float[] sunImd = s.getLight().getDiffuse();
 		float[] sunIms = s.getLight().getSpecular();
-		  
 		planetShader.setUniform1f("isSun", 0.0f);
 	    planetShader.setUniform3f("lights[0].position", sunPos[0], sunPos[1], sunPos[2]);
 	    planetShader.setUniform1f("lights[0].intensity", s.getLight().getIntensity());
 	    planetShader.setUniform4f("lights[0].diffuse", sunImd[0], sunImd[1], sunImd[2], sunImd[3]);
 	    planetShader.setUniform4f("lights[0].specular", sunIms[0], sunIms[1], sunIms[2], sunIms[3]);
 	    planetShader.setUniform3f("windowDim", (float) Display.getWidth(), (float) Display.getHeight(), 1.0f);
-		  
+		
+	    //draw asteroids
+	    for(Asteroid a : asteroids){
+	    	if(!asteroidsDeleted.contains(a))
+	    		a.draw();
+	    }
+	    asteroidsDeleted.clear();
 	    for(Planet p : system.getPlanets()){
 	        p.draw();
 	    }
 	    
 	    planetShader.end();
+
 	    
 	    for(Planet p : system.getPlanets()){
 	        GL11.glPushMatrix();
@@ -221,6 +243,13 @@ public class Universe {
 	    	GL11.glEnd();
 	    	GL11.glPopMatrix();
 	     }
+	    
+	    for(Asteroid as : asteroids){
+			if(as.getDistance() < 0.0f){
+				asteroidsDeleted.add(as);
+			}
+		}
+
 		
 	}
 	

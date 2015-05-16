@@ -85,22 +85,21 @@ public class Planet extends SpaceObject{
 
 			s.draw(radius, 64, 64);
 
-			if(this.rings != null){
-				planetShader.setUniform1f("isRing", 1.0f);
-				GL11.glPushMatrix();
-				GL11.glRotatef(-this.rotationAngle, 0, 1, 0);
-				this.rings.draw();
-				GL11.glPopMatrix();
-				planetShader.setUniform1f("isRing", 0.0f);
-			}
-
 			for(Moon m : moons){
 				GL11.glPushMatrix();
 				m.draw();
 				GL11.glPopMatrix();
 			}
+		
+			if(this.rings != null){
+				planetShader.setUniform1f("isRing", 1.0f);
+				GL11.glRotatef(-this.rotationAngle, 0, 1, 0);
+				this.rings.draw();
+				planetShader.setUniform1f("isRing", 0.0f);
+			}
 		}
 		GL11.glPopMatrix();
+		
 	}
 
 	public Sphere getSphere(){
@@ -165,6 +164,9 @@ public class Planet extends SpaceObject{
 			this.texture = texture;
 		}
 
+		public void setRSpecs(List<Float []>  rspecs){
+			this.rspecs = rspecs;
+		}
 
 		public List<Float []> getRSpecs(){
 			return rspecs;

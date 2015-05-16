@@ -17,7 +17,6 @@
         <fileset dir="${basedir}/lwjgl-2.9.3/jar">
             <include name="**/*.jar"/>
         </fileset>
-        <pathelement location="ejml-v0.26-libs/EJML-core-0.26.jar"/>
     </path>
     <!--
     <property name="lwjgl." />

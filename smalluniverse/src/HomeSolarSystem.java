@@ -139,7 +139,7 @@ public class HomeSolarSystem extends SolarSystem {
 	 */
 	private void drawJupiter(Texture jupiter, Texture io, Texture ganymedes,
 			Texture europa, Texture callisto) {
-		 Moon jupiter_moon_a = new Moon(1.0f,15f, 3.13f, 0.0028f);
+		 Moon jupiter_moon_a = new Moon(1.0f,20f, 3.13f, 0.0028f);
 		 Moon jupiter_moon_b = new Moon(1.2f,25f, 3.13f, 0.0056f);
 		 Moon jupiter_moon_c = new Moon(1.4f,28f, 3.13f, 0.0014f);
 		 Moon jupiter_moon_d = new Moon(1.8f,40f, 3.13f, 0.00059f);

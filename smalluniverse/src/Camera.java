@@ -12,7 +12,7 @@ import org.lwjgl.input.Mouse;
 *
 */
 public class Camera {
-  public static float moveSpeed = 2f;
+  public static float moveSpeed = 4f;
   public static float mouseSensitivity = 0.01f;
   
   private Vector3f pos;
