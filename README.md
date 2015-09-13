@@ -24,8 +24,8 @@ The Asteroid object is created separately from the other space objects in the pr
 
 4. Movement 
 The program simulates two basic movements for the planets and their moons:
-• Revolution 
-• Rotation
+* Revolution 
+* Rotation
 
 Sun utilizes only rotation.
 
