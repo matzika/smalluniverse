@@ -24,8 +24,9 @@ The Asteroid object is created separately from the other space objects in the pr
 
 4. Movement 
 The program simulates two basic movements for the planets and their moons:
-* Revolution 
-* Rotation
+
+  - Revolution 
+  - Rotation
 
 Sun utilizes only rotation.
 
@@ -33,12 +34,12 @@ The angle and coordinates are updated on each redraw, giving the impression of m
 The rotation is straight forward, and using a loop to 360 degrees which would use the cosine of an axial tilt as applied to the planet object.
 
 5. Shading and Lighting  
-*Shaders
+* Shaders
 For the shading of the solar system we implemented two separate shaders. The first is a simple light shader that uses Blinn-Phong for the lighting model. The second shader is to animate the sun. This shader was a bit more involved than the lighting one. There were several options for doing this animation. We could have used a map for the height displacement or done the displacement of the vertices through the shader. We opted for the second method as we are only animating one object, so the calculations do not diminish the performance. The animation is vertex displacement, handled through Perlin Noise. The perlin noise is used to determine the offset for each vertex. This is animated by passing in a time variable to the shader, allowing for a moving orb. This is done to simulate the hot, changing surface of the Sun.
 ￼
 ShaderProgram.java was used to handle the loading of shaders and for setting shader parameters.
 
-*Lights and Materials
+* Lights and Materials
 Following the example within the Ray Tracer project, our light sources and planet surfaces were each represented by their own classes. The Material.java class is a representation of an object’s material. It contains the object’s texture as well the specular and diffuse components.
 The Light.java class is a simple point light with a location, diffuse, specular, and ambient component. These are Im,s and Im,d components in the Blinn-Phong equation.
 These two classes are part of every planet and sun within our system and are in charge of delegating to the shader what should be drawn.
