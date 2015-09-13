@@ -8,7 +8,7 @@ The program simulates a sun and the 9 planets of the solar system. Revolution an
 
 The user can navigate around the solar system using the keyboard or the mouse.
 
-![System's Architecture](/images/logo.png)
-Format: ![Alt Text](url)
+![System's Architecture](/images/architecture.png)
+
 
 Contact: katerina.iliakopoulou@gmail.com
