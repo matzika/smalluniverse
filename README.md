@@ -56,4 +56,5 @@ To Navigate inside the Universe:
 
 ![Screenshot of the simulated universe](/images/universe.png)
 
-Contact: katerina.iliakopoulou@gmail.com, 
+Contact: Katerina Iliakopoulou (ai2315@columbia.edu), Michael Moldoveanu (rmm2231@columbia.edu), Shloka Kini(srk2169@columbia.edu)
+
